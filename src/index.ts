@@ -35,5 +35,3 @@ const types = {
 }
 
 export { hooks, clients, types }
-
-// import {useBanks, useMerchantTags} from "@nofrixion/clients/hooks";

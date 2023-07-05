@@ -1,0 +1,15 @@
+{
+  "material-icon-theme.folders.associations": {
+    "components": "React-components",
+    "web-components": "Public"
+  },
+  "prettier.configPath": ".prettierrc",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
