@@ -19,32 +19,6 @@
   "files": [
     "/dist"
   ],
-  "exports": {
-    ".": {
-      "import": "./dist/nofrixion-clients.es.js",
-      "require": "./dist/nofrixion-clients.umd.js"
-    },
-    "./types": "./dist/index.d.ts",
-    "./clients": "./dist/clients/index.ts",
-    "./hooks": "./dist/hooks/index.d.ts",
-    "./responseTypes": "./dist/responseTypes/index.d.ts"
-  },
-  "typesVersions": {
-    "*": {
-      "types": [
-        "./dist/index.d.ts"
-      ],
-      "clients": [
-        "./src/clients/index.ts"
-      ],
-      "hooks": [
-        "./src/hooks/index.ts"
-      ],
-      "responseTypes": [
-        "./src/responseTypes/index.ts"
-      ]
-    }
-  },
   "dependencies": {
     "axios": "^1.4.0",
     "react": "^18.2.0",
