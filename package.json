@@ -1,5 +1,5 @@
 {
-  "name": "nofrixion.clients",
+  "name": "@nofrixion/moneymoov",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -16,10 +16,40 @@
   "main": "./dist/nofrixion-clients.umd.js",
   "module": "./dist/nofrixion-clients.es.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/nofrixion-clients.es.js",
+      "require": "./dist/nofrixion-clients.umd.js"
+    },
+    "./types": "./dist/index.d.ts",
+    "./clients": "./dist/clients/index.ts",
+    "./hooks": "./dist/hooks/index.d.ts",
+    "./responseTypes": "./dist/responseTypes/index.d.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "types": [
+        "./dist/index.d.ts"
+      ],
+      "clients": [
+        "./src/clients/index.ts"
+      ],
+      "hooks": [
+        "./src/hooks/index.ts"
+      ],
+      "responseTypes": [
+        "./src/responseTypes/index.ts"
+      ]
+    }
+  },
   "dependencies": {
     "axios": "^1.4.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "typescript-subpath-exports-workaround": "^1.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.3.3",
@@ -45,5 +75,12 @@
     "vite-plugin-dts": "^3.0.3",
     "vite-plugin-linter": "^2.0.2",
     "vite-tsconfig-paths": "^4.2.0"
-  }
+  },
+  "keywords": [],
+  "author": "NoFrixion",
+  "bugs": {
+    "url": "https://github.com/nofrixion/nofrixion.clients/issues"
+  },
+  "homepage": "https://github.com/nofrixion/nofrixion.clients#readme",
+  "license": "MIT"
 }

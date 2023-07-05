@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PaymentRequestClient } from '../clients/PaymentRequestClient'
-import { ApiError, PaymentRequestMetrics } from '../types/ApiResponses'
+import { ApiError, PaymentRequestMetrics } from '../responseTypes/ApiResponses'
 
 export const usePaymentRequestMetrics = (
   apiUrl: string,

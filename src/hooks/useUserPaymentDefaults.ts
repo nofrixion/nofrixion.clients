@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ApiError, UserPaymentDefaults } from '../types/ApiResponses'
+import { ApiError, UserPaymentDefaults } from '../responseTypes/ApiResponses'
 import { ClientSettingsClient } from '../clients/ClientSettingsClient'
 
 export const useUserPaymentDefaults = (

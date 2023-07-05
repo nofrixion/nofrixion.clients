@@ -6,13 +6,15 @@ import {
   usePaymentRequests,
   useUserPaymentDefaults,
 } from './hooks'
+
 import {
   ClientSettingsClient,
   MerchantClient,
   MoneyMoovApiClient,
   PaymentRequestClient,
 } from './clients'
-import * as Types from './types'
+
+import * as Types from './responseTypes'
 
 const hooks = {
   useBanks: useBanks,
@@ -30,8 +32,8 @@ const clients = {
   paymentRequestClient: PaymentRequestClient,
 }
 
-const types = {
+const responseTypes = {
   ...Types,
 }
 
-export { hooks, clients, types }
+export { hooks, clients, responseTypes }

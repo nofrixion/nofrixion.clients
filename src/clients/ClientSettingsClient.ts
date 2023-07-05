@@ -1,5 +1,5 @@
-import { ApiError, UserPaymentDefaults } from '../types/ApiResponses'
-import { HttpMethod } from '../types/Enums'
+import { ApiError, UserPaymentDefaults } from '../responseTypes/ApiResponses'
+import { HttpMethod } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
 /**

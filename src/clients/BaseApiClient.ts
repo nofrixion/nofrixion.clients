@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
-import { ApiError } from '../types/ApiResponses'
-import { HttpMethod } from '../types/Enums'
+import { ApiError } from '../responseTypes/ApiResponses'
+import { HttpMethod } from '../responseTypes/Enums'
 
 export abstract class BaseApiClient {
   authToken: string

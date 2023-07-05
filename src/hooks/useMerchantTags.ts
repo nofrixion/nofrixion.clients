@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
-import { ApiError, Tag } from '../types/ApiResponses'
+import { ApiError, Tag } from '../responseTypes/ApiResponses'
 
 export const useMerchantTags = (
   apiUrl: string,

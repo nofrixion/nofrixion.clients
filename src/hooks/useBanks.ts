@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
-import { ApiError, BankSettings } from '../types/ApiResponses'
+import { ApiError, BankSettings } from '../responseTypes/ApiResponses'
 
 export const useBanks = (
   apiUrl: string,

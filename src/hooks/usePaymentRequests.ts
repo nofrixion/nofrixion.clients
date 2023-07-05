@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { SortDirection } from '../types/Enums'
-import { formatPaymentRequestSortExpression } from '../types/formatters'
+import { SortDirection } from '../responseTypes/Enums'
+import { formatPaymentRequestSortExpression } from '../responseTypes/formatters'
 import { MoneyMoovApiClient } from '../clients/MoneyMoovApiClient'
-import { ApiError, PaymentRequest } from '../types/ApiResponses'
-import { PaymentRequestStatus } from '../types/Enums'
+import { ApiError, PaymentRequest } from '../responseTypes/ApiResponses'
+import { PaymentRequestStatus } from '../responseTypes/Enums'
 
 export const usePaymentRequests = (
   apiUrl: string,

@@ -1,5 +1,5 @@
-import { ApiError, MerchantBankSettings, Tag } from '../types/ApiResponses'
-import { HttpMethod } from '../types/Enums'
+import { ApiError, MerchantBankSettings, Tag } from '../responseTypes/ApiResponses'
+import { HttpMethod } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
 /**
