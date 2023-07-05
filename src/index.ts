@@ -14,4 +14,4 @@ export {
   PaymentRequestClient,
 } from './clients'
 
-export * as Types from './responseTypes'
+export * from './responseTypes'
