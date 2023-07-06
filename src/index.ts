@@ -14,4 +14,6 @@ export {
   PaymentRequestClient,
 } from './clients'
 
-export * from './responseTypes'
+export * from './responseTypes/ApiResponses'
+
+export * from './responseTypes/Enums'

@@ -88,7 +88,6 @@ export const usePaymentRequests = (
     minAmount,
     maxAmount,
     tags,
-    client.PaymentRequests,
   ])
 
   return {
