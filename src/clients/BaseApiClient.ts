@@ -143,7 +143,10 @@ export abstract class BaseApiClient {
 
       if (error.response?.data) {
         // This contains the problem details
-        console.log('Received error from api. : ' + JSON.stringify(error.response?.data))
+
+        if (this.debug) {
+          console.log('Received error from api. : ' + JSON.stringify(error.response?.data))
+        }
 
         return {
           error: error.response?.data as ApiError,
