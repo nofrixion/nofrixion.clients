@@ -13,8 +13,8 @@ export const useMerchantTags = (
 
   useEffect(() => {
     const fetchMerchantTags = async () => {
-      const client = new MerchantClient(apiUrl, authToken, merchantId, onUnauthorized)
-      const response = await client.getTags()
+      const client = new MerchantClient(apiUrl, authToken, onUnauthorized)
+      const response = await client.getTags(merchantId)
 
       if (response.data) {
         setTags(response.data)

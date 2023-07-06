@@ -1,10 +1,11 @@
-'use client'
-import { Merchant } from '../responseTypes/ApiResponses'
+import { MerchantClient } from '../clients'
+import { ApiError, Merchant } from '../responseTypes/ApiResponses'
 import { useEffect, useState } from 'react'
 
-export const useMerchants = (apiUrl: string, accessToken?: string, onUnauthorized?: () => void) => {
+export const useMerchants = (apiUrl: string, onUnauthorized: () => void, accessToken?: string) => {
   const [merchants, setMerchants] = useState<Merchant[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [apiError, setApiError] = useState<ApiError>()
 
   useEffect(() => {
     const fetchMerchants = async () => {
@@ -15,20 +16,15 @@ export const useMerchants = (apiUrl: string, accessToken?: string, onUnauthorize
 
         setIsLoading(true)
 
-        const response = await fetch(`${apiUrl}/merchants`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        const client = new MerchantClient(apiUrl, accessToken, onUnauthorized)
 
-        if (response.status === 401) {
-          onUnauthorized && onUnauthorized()
-          setIsLoading(false)
-          return
+        const response = await client.get()
+
+        if (response.data) {
+          setMerchants(response.data)
+        } else if (response.error) {
+          setApiError(response.error)
         }
-
-        const merchants = (await response.json()) as Merchant[]
 
         setMerchants(merchants)
         setIsLoading(false)
@@ -39,7 +35,7 @@ export const useMerchants = (apiUrl: string, accessToken?: string, onUnauthorize
     }
 
     fetchMerchants()
-  }, [accessToken, apiUrl, onUnauthorized])
+  }, [accessToken, apiUrl, merchants, onUnauthorized])
 
-  return { merchants, isLoading }
+  return { merchants, isLoading, apiError }
 }

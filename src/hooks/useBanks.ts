@@ -13,8 +13,8 @@ export const useBanks = (
 
   useEffect(() => {
     const fetchBanks = async () => {
-      const client = new MerchantClient(apiUrl, authToken, merchantId, onUnauthorized)
-      const response = await client.getBankSettings()
+      const client = new MerchantClient(apiUrl, authToken, onUnauthorized)
+      const response = await client.getBankSettings(merchantId)
 
       if (response.data) {
         setBanks(response.data.payByBankSettings)
