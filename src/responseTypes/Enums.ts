@@ -94,3 +94,10 @@ export enum SortDirection {
   ASC = 'ASC',
   DESC = 'DESC',
 }
+
+export enum AccountIdentifierType {
+  Unknown = 'Unknown',
+  SCAN = 'SCAN',
+  IBAN = 'IBAN',
+  DD = 'DD',
+}

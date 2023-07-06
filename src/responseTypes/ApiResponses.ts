@@ -1,4 +1,5 @@
 import {
+  AccountIdentifierType,
   AddressType,
   CardTokenCreateModes,
   Currency,
@@ -208,4 +209,48 @@ export type BankSettings = {
   businessInstitutionID?: string
   message?: string
   messageImageUrl?: string
+}
+
+export interface Account {
+  id: string
+  merchantID: string
+  accountName: string
+  accountNumber: string
+  availableBalance: number
+  balance: number
+  currency: Currency
+  displayName: string
+  iban: string
+  sortCode: string
+  summary: string
+  identifier: AccountIdentifier
+  isDefault: boolean
+}
+
+export interface AccountIdentifier {
+  type: AccountIdentifierType
+  currency: string
+  bic: string
+  iban: string
+  accountNumber: string
+  sortCode: string
+}
+
+export interface Merchant {
+  id: string
+  name: string
+  enabled: boolean
+  companyID: string
+  merchantCategoryCode: string
+  shortName: string
+  paymentAccountLimit: number
+  inserted: string
+  jurisdiction: string
+  hostedPayVersion: number
+  webHookLimit: number
+  displayQrOnHostedPay: boolean
+  yourRole: string
+  userRoles: any[] // TODO: Add type
+  tags: any[]
+  paymentAccounts: any[] // TODO: Add type
 }
