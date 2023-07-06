@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { SortDirection } from '../responseTypes/Enums'
 import { formatPaymentRequestSortExpression } from '../responseTypes/formatters'
-import { MoneyMoovApiClient } from '../clients/MoneyMoovApiClient'
 import { ApiError, PaymentRequest } from '../responseTypes/ApiResponses'
 import { PaymentRequestStatus } from '../responseTypes/Enums'
+import { PaymentRequestClient } from '../clients'
 
 export const usePaymentRequests = (
   apiUrl: string,
@@ -25,8 +25,6 @@ export const usePaymentRequests = (
   maxAmount?: number,
   tags?: string[],
 ) => {
-  const client = new MoneyMoovApiClient(apiUrl, authToken, merchantId, onUnauthorized)
-
   const [paymentRequests, setPaymentRequests] = useState<PaymentRequest[] | undefined>(undefined)
   const [pageNumber, setPageNumber] = useState(1)
   const [totalRecords, setTotalRecords] = useState(1)
@@ -36,7 +34,10 @@ export const usePaymentRequests = (
   useEffect(() => {
     const fetchPaymentRequests = async () => {
       setIsLoading(true)
-      const response = await client.PaymentRequests.getAll(
+
+      const client = new PaymentRequestClient(apiUrl, authToken, merchantId, onUnauthorized)
+
+      const response = await client.getAll(
         page,
         pageSize,
         sortExpression,
@@ -88,6 +89,7 @@ export const usePaymentRequests = (
     minAmount,
     maxAmount,
     tags,
+    onUnauthorized,
   ])
 
   return {
