@@ -15,7 +15,7 @@ NoFrixion MoneyMoov is a collection of API clients, hooks and types for accessin
 1. Clone the repository
 
 ```bash
-git clone git@github.com:nofrixion/nofrixion.webcomponents.git
+git clone git@github.com:nofrixion/nofrixion.clients.git
 ```
 
 2. Install dependencies

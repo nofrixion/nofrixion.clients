@@ -5,10 +5,12 @@ import { HttpMethod } from '../responseTypes/Enums'
 export abstract class BaseApiClient {
   authToken: string
   onUnauthorized: () => void
+  debug: boolean
 
-  constructor(authToken: string, onUnauthorized: () => void) {
+  constructor(authToken: string, onUnauthorized: () => void, debug?: boolean) {
     this.authToken = authToken
     this.onUnauthorized = onUnauthorized
+    this.debug = debug ?? false
   }
 
   /**
@@ -103,7 +105,9 @@ export abstract class BaseApiClient {
     data?: TResponse
     error?: ApiError
   }> {
-    console.log(`Requesting: ${method} ${url}`)
+    if (this.debug) {
+      console.log(`Requesting: ${method} ${url}`)
+    }
 
     let contentType = 'application/json'
 

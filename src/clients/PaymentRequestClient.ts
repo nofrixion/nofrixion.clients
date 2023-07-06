@@ -1,11 +1,10 @@
+import { PaymentRequestCreate, PaymentRequestUpdate } from '../responseTypes/ApiRequests'
 import {
   ApiError,
-  PaymentRequestCreate,
   PaymentRequestMetrics,
   PaymentRequestMinimal,
   PaymentRequestPageResponse,
   PaymentRequest,
-  PaymentRequestUpdate,
 } from '../responseTypes/ApiResponses'
 import { HttpMethod, PaymentRequestStatus } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'

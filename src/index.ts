@@ -16,4 +16,6 @@ export {
 
 export * from './responseTypes/ApiResponses'
 
+export * from './responseTypes/ApiRequests'
+
 export * from './responseTypes/Enums'
