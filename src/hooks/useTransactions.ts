@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
 import { ApiError, Transaction } from '../responseTypes/ApiResponses'
 import { TransactionsClient } from '../clients/TransactionsClient'
-import { ApiProps } from '../props/props'
+import { ApiProps, TransactionsProps } from '../props/props'
 
 export const useTransactions = (
   { url, authToken, onUnauthorized }: ApiProps,
-  accountId?: string,
-  pageNumber?: number,
-  pageSize?: number,
+  { accountId, pageNumber, pageSize }: TransactionsProps,
 ) => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -24,7 +22,7 @@ export const useTransactions = (
 
         const client = new TransactionsClient({ url, authToken, onUnauthorized })
 
-        const response = await client.get(accountId, pageNumber, pageSize)
+        const response = await client.get({ accountId, pageNumber, pageSize })
 
         if (response.data) {
           setTransactions(response.data.content)

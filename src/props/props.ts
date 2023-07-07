@@ -50,6 +50,13 @@ export interface PaymentRequestProps {
   merchantId?: string
 }
 
+export interface TransactionsProps extends AccountProps {
+  pageNumber?: number
+  pageSize?: number
+  fromDate?: Date
+  toDate?: Date
+}
+
 export interface useAccountsProps extends MerchantProps {}
 
 export interface useBanksProps extends MerchantProps {}
