@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react'
 import { formatPaymentRequestSortExpression } from '../responseTypes/formatters'
 import { ApiError, PaymentRequest } from '../responseTypes/ApiResponses'
 import { PaymentRequestClient } from '../clients'
-import { usePaymentRequestsProps } from '../props/props'
+import { ApiProps, usePaymentRequestsProps } from '../props/props'
 
 export const usePaymentRequests = (
   {
-    url,
     merchantId,
     statusSortDirection,
     createdSortDirection,
@@ -23,8 +22,7 @@ export const usePaymentRequests = (
     maxAmount,
     tags,
   }: usePaymentRequestsProps,
-  authToken: string,
-  onUnauthorized: () => void,
+  { url, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [paymentRequests, setPaymentRequests] = useState<PaymentRequest[] | undefined>(undefined)
   const [pageNumber, setPageNumber] = useState(1)
@@ -40,7 +38,7 @@ export const usePaymentRequests = (
 
       setIsLoading(true)
 
-      const client = new PaymentRequestClient(url, authToken, onUnauthorized)
+      const client = new PaymentRequestClient({ url, authToken, onUnauthorized })
 
       const response = await client.getAll({
         pageNumber: initialPageNumber,
@@ -54,7 +52,6 @@ export const usePaymentRequests = (
         minAmount: minAmount,
         maxAmount: maxAmount,
         tags: tags,
-        url: url,
         merchantId: merchantId,
       })
 

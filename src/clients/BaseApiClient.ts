@@ -32,22 +32,24 @@ export abstract class BaseApiClient {
    * @param accountId Optional. The account id filter to apply to retrieve records with this account id.
    * @returns A Paged response of type TResponse if successful. An ApiError if not successful.
    */
-  protected async getPagedResponse<TResponse>({
-    url: url,
-    merchantId: merchantId,
-    pageNumber: pageNumber,
-    pageSize: pageSize,
-    sort: sort,
-    fromDate: fromDate,
-    toDate: toDate,
-    status: status,
-    search: search,
-    currency: currency,
-    minAmount: minAmount,
-    maxAmount: maxAmount,
-    tags: tags,
-    accountId: accountId,
-  }: PagedResponseProps): Promise<{
+  protected async getPagedResponse<TResponse>(
+    {
+      merchantId: merchantId,
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+      sort: sort,
+      fromDate: fromDate,
+      toDate: toDate,
+      status: status,
+      search: search,
+      currency: currency,
+      minAmount: minAmount,
+      maxAmount: maxAmount,
+      tags: tags,
+      accountId: accountId,
+    }: PagedResponseProps,
+    url: string,
+  ): Promise<{
     data?: TResponse
     error?: ApiError
   }> {

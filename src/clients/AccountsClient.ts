@@ -1,4 +1,4 @@
-import { MerchantProps } from '../props/props'
+import { ApiProps, MerchantProps } from '../props/props'
 import { Account, ApiError, HttpMethod } from '../responseTypes'
 import { BaseApiClient } from './BaseApiClient'
 
@@ -15,9 +15,9 @@ export class AccountsClient extends BaseApiClient {
    * Sandbox: https://api-sandbox.nofrixion.com/api/v1
    * @param authToken The OAUTH token used to authenticate with the api.
    */
-  constructor(apiBaseUrl: string, authToken: string, onUnauthorized: () => void) {
+  constructor({ url, authToken, onUnauthorized }: ApiProps) {
     super(authToken, onUnauthorized)
-    this.url = `${apiBaseUrl}/accounts`
+    this.url = `${url}/accounts`
   }
 
   /**

@@ -1,8 +1,8 @@
 import {
   PaymentRequestProps,
-  FilterResponseProps,
   PaymentRequestPageProps,
   MetricsProps,
+  ApiProps,
 } from '../props/props'
 import { PaymentRequestCreate, PaymentRequestUpdate } from '../responseTypes/ApiRequests'
 import {
@@ -28,9 +28,9 @@ export class PaymentRequestClient extends BaseApiClient {
    * Sandbox: https://api-sandbox.nofrixion.com/api/v1
    * @param authToken The OAUTH token used to authenticate with the api.
    */
-  constructor(apiBaseUrl: string, authToken: string, onUnauthorized: () => void) {
+  constructor({ url, authToken, onUnauthorized }: ApiProps) {
     super(authToken, onUnauthorized)
-    this.apiUrl = `${apiBaseUrl}/paymentrequests`
+    this.apiUrl = `${url}/paymentrequests`
   }
 
   /**
@@ -65,21 +65,23 @@ export class PaymentRequestClient extends BaseApiClient {
     data?: PaymentRequestPageResponse
     error?: ApiError
   }> {
-    return await this.getPagedResponse<PaymentRequestPageResponse>({
-      url: this.apiUrl,
-      merchantId: merchantId,
-      pageNumber: pageNumber,
-      pageSize: pageSize,
-      sort: sort,
-      fromDate: fromDate,
-      toDate: toDate,
-      status: status,
-      search: search,
-      currency: currency,
-      minAmount: minAmount,
-      maxAmount: maxAmount,
-      tags: tags,
-    })
+    return await this.getPagedResponse<PaymentRequestPageResponse>(
+      {
+        merchantId: merchantId,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        sort: sort,
+        fromDate: fromDate,
+        toDate: toDate,
+        status: status,
+        search: search,
+        currency: currency,
+        minAmount: minAmount,
+        maxAmount: maxAmount,
+        tags: tags,
+      },
+      this.apiUrl,
+    )
   }
 
   /**

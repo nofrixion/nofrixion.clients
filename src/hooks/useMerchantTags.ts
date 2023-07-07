@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
 import { ApiError, Tag } from '../responseTypes/ApiResponses'
-import { useMerchantTagsProps } from '../props/props'
+import { ApiProps, useMerchantTagsProps } from '../props/props'
 
 export const useMerchantTags = (
-  { url, merchantId }: useMerchantTagsProps,
-  authToken: string,
-  onUnauthorized: () => void,
+  { merchantId }: useMerchantTagsProps,
+  { url, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [tags, setTags] = useState<Tag[]>()
   const [apiError, setApiError] = useState<ApiError>()
 
   useEffect(() => {
     const fetchMerchantTags = async () => {
-      const client = new MerchantClient(url, authToken, onUnauthorized)
+      const client = new MerchantClient({ url, authToken, onUnauthorized })
       const response = await client.getTags({ merchantId })
 
       if (response.data) {

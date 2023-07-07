@@ -1,10 +1,6 @@
 import { SortDirection } from '../responseTypes'
 
-export interface PagedResponseProps
-  extends ApiProps,
-    FilterResponseProps,
-    MerchantProps,
-    AccountProps {
+export interface PagedResponseProps extends FilterResponseProps, MerchantProps, AccountProps {
   pageNumber?: number
   pageSize?: number
   status?: string
@@ -36,6 +32,8 @@ export interface MetricsProps extends FilterResponseProps, MerchantProps {}
 
 export interface ApiProps {
   url: string
+  authToken: string
+  onUnauthorized: () => void
 }
 
 export interface MerchantProps {
@@ -52,19 +50,18 @@ export interface PaymentRequestProps {
   merchantId?: string
 }
 
-export interface useAccountsProps extends ApiProps, MerchantProps {}
+export interface useAccountsProps extends MerchantProps {}
 
-export interface useBanksProps extends ApiProps, MerchantProps {}
+export interface useBanksProps extends MerchantProps {}
 
-export interface useMerchantTagsProps extends ApiProps, MerchantProps {}
+export interface useMerchantTagsProps extends MerchantProps {}
 
-export interface usePaymentRequestProps extends ApiProps, MerchantProps, PaymentRequestProps {
+export interface usePaymentRequestProps extends MerchantProps, PaymentRequestProps {
   merchantId: string
 }
 
 export interface usePaymentRequestsProps
-  extends ApiProps,
-    MerchantProps,
+  extends MerchantProps,
     PaymentRequestProps,
     PaymentRequestPageProps {
   merchantId: string
@@ -76,7 +73,7 @@ export interface usePaymentRequestsProps
   toDateMS?: number
 }
 
-export interface usePaymentRequestMetricsProps extends ApiProps, MetricsProps {
+export interface usePaymentRequestMetricsProps extends MetricsProps {
   fromDateMS?: number
   toDateMS?: number
 }

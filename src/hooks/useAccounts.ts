@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Account, ApiError } from '../responseTypes/ApiResponses'
 import { AccountsClient } from '../clients/AccountsClient'
-import { useAccountsProps } from '../props/props'
+import { ApiProps, useAccountsProps } from '../props/props'
 
 export const useAccounts = (
-  { url, merchantId }: useAccountsProps,
-  onUnauthorized: () => void,
-  authToken?: string,
+  { merchantId }: useAccountsProps,
+  { url, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [apiError, setApiError] = useState<ApiError>()
@@ -21,7 +20,7 @@ export const useAccounts = (
 
         setIsLoading(true)
 
-        const client = new AccountsClient(url, authToken, onUnauthorized)
+        const client = new AccountsClient({ url, authToken, onUnauthorized })
         const response = await client.getAccounts({ merchantId: merchantId })
 
         if (response.data) {

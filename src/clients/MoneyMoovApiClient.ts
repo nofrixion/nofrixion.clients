@@ -1,3 +1,4 @@
+import { ApiProps } from '../props/props'
 import { ClientSettingsClient } from './ClientSettingsClient'
 import { PaymentRequestClient } from './PaymentRequestClient'
 
@@ -28,16 +29,19 @@ export class MoneyMoovApiClient {
    * @param authToken The OAUTH token used to authenticate with the api.
    * @param merchantId The merchant id to use when accessing the api.
    */
-  constructor(
-    apiBaseUrl: string,
-    authToken: string,
-    merchantId: string,
-    onUnauthorized: () => void,
-  ) {
-    this.apiBaseUrl = apiBaseUrl
+  constructor({ url, authToken, onUnauthorized }: ApiProps) {
+    this.apiBaseUrl = url
     this.authToken = authToken
 
-    this.PaymentRequests = new PaymentRequestClient(apiBaseUrl, authToken, onUnauthorized)
-    this.ClientSettings = new ClientSettingsClient(apiBaseUrl, authToken, onUnauthorized)
+    this.PaymentRequests = new PaymentRequestClient({
+      url: url,
+      authToken: authToken,
+      onUnauthorized: onUnauthorized,
+    })
+    this.ClientSettings = new ClientSettingsClient({
+      url: url,
+      authToken: authToken,
+      onUnauthorized: onUnauthorized,
+    })
   }
 }

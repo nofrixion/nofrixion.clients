@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { PaymentRequestClient } from '../clients/PaymentRequestClient'
 import { ApiError, PaymentRequestMetrics } from '../responseTypes/ApiResponses'
-import { usePaymentRequestMetricsProps } from '../props/props'
+import { ApiProps, usePaymentRequestMetricsProps } from '../props/props'
 
 export const usePaymentRequestMetrics = (
   {
-    url,
     currency,
     fromDateMS,
     toDateMS,
@@ -15,8 +14,7 @@ export const usePaymentRequestMetrics = (
     search,
     tags,
   }: usePaymentRequestMetricsProps,
-  onUnauthorized: () => void,
-  authToken?: string,
+  { url, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [metrics, setMetrics] = useState<PaymentRequestMetrics>()
   const [apiError, setApiError] = useState<ApiError>()
@@ -30,7 +28,7 @@ export const usePaymentRequestMetrics = (
 
       setIsLoading(true)
 
-      const client = new PaymentRequestClient(url, authToken, onUnauthorized)
+      const client = new PaymentRequestClient({ url, authToken, onUnauthorized })
 
       const response = await client.metrics({
         fromDate: fromDateMS ? new Date(fromDateMS) : undefined,

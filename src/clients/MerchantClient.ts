@@ -1,4 +1,4 @@
-import { MerchantProps } from '../props/props'
+import { ApiProps, MerchantProps } from '../props/props'
 import { ApiError, Merchant, MerchantBankSettings, Tag } from '../responseTypes/ApiResponses'
 import { HttpMethod } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'
@@ -17,9 +17,9 @@ export class MerchantClient extends BaseApiClient {
    * @param authToken The OAUTH token used to authenticate with the api.
    * @param merchantId The merchant id to use for the requests.
    */
-  constructor(apiBaseUrl: string, authToken: string, onUnauthorized: () => void) {
+  constructor({ url, authToken, onUnauthorized }: ApiProps) {
     super(authToken, onUnauthorized)
-    this.apiUrl = `${apiBaseUrl}/merchants`
+    this.apiUrl = `${url}/merchants`
   }
 
   /**

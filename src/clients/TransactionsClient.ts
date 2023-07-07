@@ -1,3 +1,4 @@
+import { ApiProps } from '../props/props'
 import { ApiError, TransactionPageResponse } from '../responseTypes/ApiResponses'
 import { BaseApiClient } from './BaseApiClient'
 
@@ -15,9 +16,9 @@ export class TransactionsClient extends BaseApiClient {
    * @param authToken The OAUTH token used to authenticate with the api.
    * @param onUnauthorized A callback function to call when the api returns a 401 Unauthorized response.
    */
-  constructor(apiBaseUrl: string, authToken: string, onUnauthorized: () => void) {
+  constructor({ url, authToken, onUnauthorized }: ApiProps) {
     super(authToken, onUnauthorized)
-    this.apiUrl = `${apiBaseUrl}/transactions`
+    this.apiUrl = `${url}/transactions`
   }
 
   /**
@@ -39,13 +40,15 @@ export class TransactionsClient extends BaseApiClient {
     data?: TransactionPageResponse
     error?: ApiError
   }> {
-    return await this.getPagedResponse<TransactionPageResponse>({
-      accountId: accountId,
-      url: this.apiUrl,
-      pageNumber: pageNumber,
-      pageSize: pageSize,
-      fromDate: fromDate,
-      toDate: toDate,
-    })
+    return await this.getPagedResponse<TransactionPageResponse>(
+      {
+        accountId: accountId,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        fromDate: fromDate,
+        toDate: toDate,
+      },
+      this.apiUrl,
+    )
   }
 }

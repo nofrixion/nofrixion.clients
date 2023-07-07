@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
 import { ApiError, BankSettings } from '../responseTypes/ApiResponses'
-import { useBanksProps } from '../props/props'
+import { ApiProps, useBanksProps } from '../props/props'
 
 export const useBanks = (
-  { url, merchantId }: useBanksProps,
-  authToken: string,
-  onUnauthorized: () => void,
+  { merchantId }: useBanksProps,
+  { url, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [banks, setBanks] = useState<BankSettings[]>()
   const [apiError, setApiError] = useState<ApiError>()
@@ -20,7 +19,7 @@ export const useBanks = (
 
       setIsLoading(true)
 
-      const client = new MerchantClient(url, authToken, onUnauthorized)
+      const client = new MerchantClient({ url, authToken, onUnauthorized })
       const response = await client.getBankSettings({ merchantId })
 
       if (response.data) {
