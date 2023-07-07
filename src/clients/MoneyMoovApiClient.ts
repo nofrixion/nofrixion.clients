@@ -1,11 +1,13 @@
 import { ApiProps } from '../props/props'
+import { AccountsClient } from './AccountsClient'
 import { ClientSettingsClient } from './ClientSettingsClient'
+import { MerchantClient } from './MerchantClient'
 import { PaymentRequestClient } from './PaymentRequestClient'
+import { TransactionsClient } from './TransactionsClient'
+import { UsersClient } from './UsersClient'
 
 /**
  * The MoneyMoov Api Client provides access to the api endpoints in the MoneyMoov api.
- * Available apis are:
- * PaymentRequests
  */
 export class MoneyMoovApiClient {
   apiBaseUrl: string
@@ -20,6 +22,26 @@ export class MoneyMoovApiClient {
    * Provides access to the MoneyMoov ClientSettings api.
    */
   ClientSettings: ClientSettingsClient
+
+  /**
+   * Provides access to the MoneyMoov Merchants api.
+   */
+  Merchants: MerchantClient
+
+  /**
+   * Provides access to the MoneyMoov Accounts api.
+   */
+  Accounts: AccountsClient
+
+  /**
+   * Provides access to the MoneyMoov Transactions api.
+   */
+  Transactions: TransactionsClient
+
+  /**
+   * Provides access to the MoneyMoov Users api.
+   */
+  Users: UsersClient
 
   /**
    *
@@ -44,5 +66,21 @@ export class MoneyMoovApiClient {
       authToken: authToken,
       onUnauthorized: onUnauthorized,
     })
+    this.Merchants = new MerchantClient({
+      url: url,
+      authToken: authToken,
+      onUnauthorized: onUnauthorized,
+    })
+    this.Accounts = new AccountsClient({
+      url: url,
+      authToken: authToken,
+      onUnauthorized: onUnauthorized,
+    })
+    this.Transactions = new TransactionsClient({
+      url: url,
+      authToken: authToken,
+      onUnauthorized: onUnauthorized,
+    })
+    this.Users = new UsersClient({ url: url, authToken: authToken, onUnauthorized: onUnauthorized })
   }
 }
