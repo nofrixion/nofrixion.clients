@@ -1,3 +1,4 @@
+import { MerchantProps } from '../props/props'
 import { ApiError, Merchant, MerchantBankSettings, Tag } from '../responseTypes/ApiResponses'
 import { HttpMethod } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'
@@ -39,7 +40,7 @@ export class MerchantClient extends BaseApiClient {
    * @param merchantId The merchant id to get the bank settings for
    * @returns A MerchantBankSettings if successful. An ApiError if not successful.
    */
-  async getBankSettings(merchantId: string): Promise<{
+  async getBankSettings({ merchantId }: MerchantProps): Promise<{
     data?: MerchantBankSettings
     error?: ApiError
   }> {
@@ -56,7 +57,7 @@ export class MerchantClient extends BaseApiClient {
    * @param merchantId The merchant id to get the tags for
    * @returns A list of tags if successful. An ApiError if not successful.
    */
-  async getTags(merchantId: string): Promise<{
+  async getTags({ merchantId }: MerchantProps): Promise<{
     data?: Tag[]
     error?: ApiError
   }> {
@@ -75,7 +76,7 @@ export class MerchantClient extends BaseApiClient {
    * @returns True if successfull. An ApiError if not successful.
    */
   async addTag(
-    merchantId: string,
+    { merchantId }: MerchantProps,
     tag: Tag,
   ): Promise<{
     data?: Tag
@@ -97,7 +98,7 @@ export class MerchantClient extends BaseApiClient {
    * @returns True if successfull. An ApiError if not successful.
    */
   async deleteTag(
-    merchantId: string,
+    { merchantId }: MerchantProps,
     tagId: string,
   ): Promise<{
     success?: boolean

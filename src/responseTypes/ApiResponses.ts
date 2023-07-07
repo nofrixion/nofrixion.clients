@@ -254,3 +254,40 @@ export interface Merchant {
   tags: any[]
   paymentAccounts: any[] // TODO: Add type
 }
+
+export interface Transaction {
+  id: string
+  merchantID: string
+  accountID: string
+  amount: number
+  currency: Currency
+  description: string
+  transactionDate: string
+  yourReference: string
+  theirReference: string
+  balance: number
+  counterparty: Counterparty
+}
+
+export interface Counterparty {
+  accountID: string
+  name: string
+  emailAddress: string
+  phoneNumber: string
+  identifier: AccountIdentifier
+}
+
+export interface TransactionPageResponse {
+  content: Transaction[]
+  pageNumber: number
+  pageSize: number
+  totalPages: number
+  totalSize: number
+}
+
+export interface User {
+  id: string
+  emailAddress: string
+  firstName: string
+  lastName: string
+}

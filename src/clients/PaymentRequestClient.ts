@@ -1,3 +1,9 @@
+import {
+  PaymentRequestProps,
+  FilterResponseProps,
+  PaymentRequestPageProps,
+  MetricsProps,
+} from '../props/props'
 import { PaymentRequestCreate, PaymentRequestUpdate } from '../responseTypes/ApiRequests'
 import {
   ApiError,
@@ -15,24 +21,16 @@ import { BaseApiClient } from './BaseApiClient'
  */
 export class PaymentRequestClient extends BaseApiClient {
   apiUrl: string
-  merchantId: string
 
   /**
    * @param apiBaseUrl The base api url.
    * Production: https://api.nofrixion.com/api/v1
    * Sandbox: https://api-sandbox.nofrixion.com/api/v1
    * @param authToken The OAUTH token used to authenticate with the api.
-   * @param merchantId The merchant id to use when accessing the api.
    */
-  constructor(
-    apiBaseUrl: string,
-    authToken: string,
-    merchantId: string,
-    onUnauthorized: () => void,
-  ) {
+  constructor(apiBaseUrl: string, authToken: string, onUnauthorized: () => void) {
     super(authToken, onUnauthorized)
     this.apiUrl = `${apiBaseUrl}/paymentrequests`
-    this.merchantId = merchantId
   }
 
   /**
@@ -50,37 +48,38 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param tags Optional. The tags filter to apply to retrieve records with these tags.
    * @returns A PaymentRequestPageResponse if successful. An ApiError if not successful.
    */
-  async getAll(
+  async getAll({
     pageNumber = 1,
     pageSize = 20,
-    sort?: string,
-    fromDate?: Date,
-    toDate?: Date,
-    status?: PaymentRequestStatus,
-    search?: string,
-    currency?: string,
-    minAmount?: number,
-    maxAmount?: number,
-    tags?: string[],
-  ): Promise<{
+    sort,
+    fromDate,
+    toDate,
+    status,
+    search,
+    currency,
+    minAmount,
+    maxAmount,
+    tags,
+    merchantId,
+  }: PaymentRequestPageProps): Promise<{
     data?: PaymentRequestPageResponse
     error?: ApiError
   }> {
-    return await this.getPagedResponse<PaymentRequestPageResponse>(
-      this.apiUrl,
-      this.merchantId,
-      pageNumber,
-      pageSize,
-      sort,
-      fromDate,
-      toDate,
-      status,
-      search,
-      currency,
-      minAmount,
-      maxAmount,
-      tags,
-    )
+    return await this.getPagedResponse<PaymentRequestPageResponse>({
+      url: this.apiUrl,
+      merchantId: merchantId,
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+      sort: sort,
+      fromDate: fromDate,
+      toDate: toDate,
+      status: status,
+      search: search,
+      currency: currency,
+      minAmount: minAmount,
+      maxAmount: maxAmount,
+      tags: tags,
+    })
   }
 
   /**
@@ -89,10 +88,7 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param includeEvents Optional. Include the events for the Payment Request. Default is false.
    * @returns A PaymentRequest if successful. An ApiError if not successful.
    */
-  async get(
-    paymentRequestId: string,
-    includeEvents = false,
-  ): Promise<{
+  async get({ paymentRequestId, includeEvents = false }: PaymentRequestProps): Promise<{
     data?: PaymentRequest
     error?: ApiError
   }> {
@@ -203,15 +199,16 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param tags Optional. The tags filter to apply to retrieve payment request metrics with these tags.
    * @returns A PaymentRequestMetrics response if successful. An ApiError if not successful.
    */
-  async metrics(
-    fromDate?: Date,
-    toDate?: Date,
-    search?: string,
-    currency?: string,
-    minAmount?: number,
-    maxAmount?: number,
-    tags?: string[],
-  ): Promise<{
+  async metrics({
+    fromDate,
+    toDate,
+    search,
+    currency,
+    minAmount,
+    maxAmount,
+    tags,
+    merchantId,
+  }: MetricsProps): Promise<{
     data?: PaymentRequestMetrics
     error?: ApiError
   }> {
@@ -219,7 +216,9 @@ export class PaymentRequestClient extends BaseApiClient {
 
     const filterParams = new URLSearchParams()
 
-    filterParams.append('merchantID', this.merchantId)
+    if (merchantId) {
+      filterParams.append('merchantID', merchantId)
+    }
 
     if (fromDate) {
       filterParams.append('fromDate', fromDate.toUTCString())

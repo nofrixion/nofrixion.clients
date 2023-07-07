@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { NOFRIXION_API_URL } from '../constants'
-import { User } from '../types/localTypes'
+import { ApiError, User } from '../responseTypes'
+import { UsersClient } from '../clients'
 
-export const useUser = (accessToken?: string, onUnauthorized?: () => void) => {
+export const useUser = (apiUrl: string, onUnauthorized: () => void, accessToken?: string) => {
   const [user, setUser] = useState<User>()
+  const [apiError, setApiError] = useState<ApiError>()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -15,22 +16,15 @@ export const useUser = (accessToken?: string, onUnauthorized?: () => void) => {
 
         setIsLoading(true)
 
-        const response = await fetch(`${NOFRIXION_API_URL}/user`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        const client = new UsersClient(apiUrl, accessToken, onUnauthorized)
+        const response = await client.getUser()
 
-        if (response.status === 401) {
-          setIsLoading(false)
-          onUnauthorized && onUnauthorized()
-          return
+        if (response.data) {
+          setUser(response.data)
+        } else if (response.error) {
+          setApiError(response.error)
         }
 
-        const user = (await response.json()) as User
-
-        setUser(user)
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
@@ -39,7 +33,7 @@ export const useUser = (accessToken?: string, onUnauthorized?: () => void) => {
     }
 
     fetchUser()
-  }, [accessToken, onUnauthorized, setUser])
+  }, [accessToken, apiUrl, onUnauthorized])
 
-  return { user, isLoading }
+  return { user, isLoading, apiError }
 }

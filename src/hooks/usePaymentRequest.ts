@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { PaymentRequestClient } from '../clients/PaymentRequestClient'
 import { ApiError, PaymentRequest } from '../responseTypes/ApiResponses'
+import { usePaymentRequestProps } from '../props/props'
 
 export const usePaymentRequest = (
-  paymentRequestId: string,
-  apiUrl: string,
+  { paymentRequestId, merchantId, url }: usePaymentRequestProps,
   authToken: string,
-  merchantId: string,
   onUnauthorized: () => void,
 ) => {
   const [paymentRequest, setPaymentRequest] = useState<PaymentRequest>()
@@ -14,8 +13,8 @@ export const usePaymentRequest = (
 
   useEffect(() => {
     const fetchPaymentRequest = async () => {
-      const client = new PaymentRequestClient(apiUrl, authToken, merchantId, onUnauthorized)
-      const response = await client.get(paymentRequestId)
+      const client = new PaymentRequestClient(url, authToken, onUnauthorized)
+      const response = await client.get({ paymentRequestId, merchantId })
 
       if (response.data) {
         setPaymentRequest(response.data)
@@ -25,7 +24,7 @@ export const usePaymentRequest = (
     }
 
     fetchPaymentRequest()
-  }, [paymentRequestId, apiUrl, authToken, merchantId, onUnauthorized])
+  }, [paymentRequestId, authToken, merchantId, onUnauthorized, url])
 
   return {
     paymentRequest,

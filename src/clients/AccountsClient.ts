@@ -1,3 +1,4 @@
+import { MerchantProps } from '../props/props'
 import { Account, ApiError, HttpMethod } from '../responseTypes'
 import { BaseApiClient } from './BaseApiClient'
 
@@ -24,7 +25,7 @@ export class AccountsClient extends BaseApiClient {
    * @param merchantId Optional. The merchant id to filter by.
    * @returns A list of accounts by merchantId or user if successful. An ApiError if not successful.
    */
-  async getAccounts(merchantId?: string): Promise<{
+  async getAccounts({ merchantId }: MerchantProps): Promise<{
     data?: Account[]
     error?: ApiError
   }> {

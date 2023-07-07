@@ -37,12 +37,7 @@ export class MoneyMoovApiClient {
     this.apiBaseUrl = apiBaseUrl
     this.authToken = authToken
 
-    this.PaymentRequests = new PaymentRequestClient(
-      apiBaseUrl,
-      authToken,
-      merchantId,
-      onUnauthorized,
-    )
+    this.PaymentRequests = new PaymentRequestClient(apiBaseUrl, authToken, onUnauthorized)
     this.ClientSettings = new ClientSettingsClient(apiBaseUrl, authToken, onUnauthorized)
   }
 }

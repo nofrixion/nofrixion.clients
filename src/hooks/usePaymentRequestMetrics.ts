@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react'
 import { PaymentRequestClient } from '../clients/PaymentRequestClient'
 import { ApiError, PaymentRequestMetrics } from '../responseTypes/ApiResponses'
+import { usePaymentRequestMetricsProps } from '../props/props'
 
 export const usePaymentRequestMetrics = (
-  apiUrl: string,
-  authToken: string,
-  merchantId: string,
+  {
+    url,
+    currency,
+    fromDateMS,
+    toDateMS,
+    maxAmount,
+    merchantId,
+    minAmount,
+    search,
+    tags,
+  }: usePaymentRequestMetricsProps,
   onUnauthorized: () => void,
-  fromDateMs?: number,
-  toDateMs?: number,
-  searchFilter?: string,
-  currency?: string,
-  minAmount?: number,
-  maxAmount?: number,
-  tags?: string[],
+  authToken?: string,
 ) => {
   const [metrics, setMetrics] = useState<PaymentRequestMetrics>()
   const [apiError, setApiError] = useState<ApiError>()
@@ -21,17 +24,24 @@ export const usePaymentRequestMetrics = (
 
   useEffect(() => {
     const fetchPaymentRequestMetrics = async () => {
+      if (!authToken || !merchantId) {
+        return
+      }
+
       setIsLoading(true)
-      const client = new PaymentRequestClient(apiUrl, authToken, merchantId, onUnauthorized)
-      const response = await client.metrics(
-        new Date(fromDateMs ?? 0),
-        new Date(toDateMs ?? 0),
-        searchFilter,
-        currency,
-        minAmount,
-        maxAmount,
-        tags,
-      )
+
+      const client = new PaymentRequestClient(url, authToken, onUnauthorized)
+
+      const response = await client.metrics({
+        fromDate: fromDateMS ? new Date(fromDateMS) : undefined,
+        toDate: toDateMS ? new Date(toDateMS) : undefined,
+        search: search,
+        currency: currency,
+        minAmount: minAmount,
+        maxAmount: maxAmount,
+        tags: tags,
+        merchantId: merchantId,
+      })
 
       if (response.data) {
         setMetrics(response.data)
@@ -43,17 +53,17 @@ export const usePaymentRequestMetrics = (
 
     fetchPaymentRequestMetrics()
   }, [
-    apiUrl,
     authToken,
     merchantId,
-    fromDateMs,
-    toDateMs,
-    searchFilter,
     currency,
     minAmount,
     maxAmount,
     tags,
     onUnauthorized,
+    url,
+    search,
+    fromDateMS,
+    toDateMS,
   ])
 
   return {

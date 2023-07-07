@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
-import { NOFRIXION_API_URL } from '../constants'
-import { Transaction, TransactionPageResponse } from '../types/localTypes'
+import { ApiError, Transaction } from '../responseTypes/ApiResponses'
+import { TransactionsClient } from '../clients/TransactionsClient'
 
 export const useTransactions = (
+  apiUrl: string,
+  onUnauthorized: () => void,
   accessToken?: string,
   accountId?: string,
+  pageNumber?: number,
   pageSize?: number,
-  onUnauthorized?: () => void,
 ) => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [apiError, setApiError] = useState<ApiError>()
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -20,27 +23,16 @@ export const useTransactions = (
 
         setIsLoading(true)
 
-        // Just using pageSize for now, but we'll need to add pagination
-        // and use the new MoneyMoov client when it's available
-        const response = await fetch(
-          `${NOFRIXION_API_URL}/transactions/${accountId}?pageSize=${pageSize}`,
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
-        )
+        const client = new TransactionsClient(apiUrl, accessToken, onUnauthorized)
 
-        if (response.status === 401) {
-          setIsLoading(false)
-          onUnauthorized && onUnauthorized()
-          return
+        const response = await client.get(accountId, pageNumber, pageSize)
+
+        if (response.data) {
+          setTransactions(response.data.content)
+        } else if (response.error) {
+          setApiError(response.error)
         }
 
-        const transactionPage = (await response.json()) as TransactionPageResponse
-
-        setTransactions(transactionPage?.content)
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
@@ -49,7 +41,7 @@ export const useTransactions = (
     }
 
     fetchTransactions()
-  }, [accessToken, accountId, onUnauthorized, pageSize])
+  }, [accessToken, accountId, apiUrl, onUnauthorized, pageNumber, pageSize])
 
-  return { transactions, isLoading }
+  return { transactions, isLoading, apiError }
 }

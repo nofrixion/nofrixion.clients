@@ -26,7 +26,6 @@ export const useMerchants = (apiUrl: string, onUnauthorized: () => void, accessT
           setApiError(response.error)
         }
 
-        setMerchants(merchants)
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)

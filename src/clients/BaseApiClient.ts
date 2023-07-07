@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { ApiError } from '../responseTypes/ApiResponses'
 import { HttpMethod } from '../responseTypes/Enums'
+import { PagedResponseProps } from '../props/props'
 
 export abstract class BaseApiClient {
   authToken: string
@@ -23,31 +24,48 @@ export abstract class BaseApiClient {
    * @param fromDate Optional. The date filter to apply to retrieve payment requests created after this date.
    * @param toDate Optional. The date filter to apply to retrieve payment requests created up until this date.
    * @param status Optional. The status filter to apply to retrieve records with this status.
+   * @param search Optional. The search filter to apply to retrieve records with this search text in the description, title, merchant name or contact name.
+   * @param currency Optional. The currency filter to apply to retrieve records with this currency.
+   * @param minAmount Optional. The minimum amount filter to apply to retrieve records with this minimum amount.
+   * @param maxAmount Optional. The maximum amount filter to apply to retrieve records with this maximum amount.
+   * @param tags Optional. The tags filter to apply to retrieve records with these tags.
+   * @param accountId Optional. The account id filter to apply to retrieve records with this account id.
    * @returns A Paged response of type TResponse if successful. An ApiError if not successful.
    */
-  protected async getPagedResponse<TResponse>(
-    url: string,
-    merchantId: string,
-    pageNumber = 1,
-    pageSize = 20,
-    sort?: string,
-    fromDate?: Date,
-    toDate?: Date,
-    status?: string,
-    search?: string,
-    currency?: string,
-    minAmount?: number,
-    maxAmount?: number,
-    tags?: string[],
-  ): Promise<{
+  protected async getPagedResponse<TResponse>({
+    url: url,
+    merchantId: merchantId,
+    pageNumber: pageNumber,
+    pageSize: pageSize,
+    sort: sort,
+    fromDate: fromDate,
+    toDate: toDate,
+    status: status,
+    search: search,
+    currency: currency,
+    minAmount: minAmount,
+    maxAmount: maxAmount,
+    tags: tags,
+    accountId: accountId,
+  }: PagedResponseProps): Promise<{
     data?: TResponse
     error?: ApiError
   }> {
     const filterParams = new URLSearchParams()
 
-    filterParams.append('merchantID', merchantId)
-    filterParams.append('page', pageNumber.toString())
-    filterParams.append('size', pageSize.toString())
+    if (pageNumber) {
+      filterParams.append('page', pageNumber.toString())
+      filterParams.append('pageNumber', pageNumber.toString())
+    }
+
+    if (pageSize) {
+      filterParams.append('size', pageSize.toString())
+      filterParams.append('pageSize', pageSize.toString())
+    }
+
+    if (merchantId) {
+      filterParams.append('merchantID', merchantId)
+    }
 
     if (sort) {
       filterParams.append('sort', sort)
@@ -83,6 +101,10 @@ export abstract class BaseApiClient {
 
     if (tags) {
       tags.forEach((tag) => filterParams.append('tags', tag))
+    }
+
+    if (accountId) {
+      filterParams.append('accountId', accountId)
     }
 
     url = `${url}?${filterParams.toString()}`
