@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
 import { ApiError, BankSettings } from '../responseTypes/ApiResponses'
-import { ApiProps, useBanksProps } from '../props/props'
+import { ApiProps, MerchantProps } from '../props/props'
 
 export const useBanks = (
-  { merchantId }: useBanksProps,
+  { merchantId }: MerchantProps,
   { url, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [banks, setBanks] = useState<BankSettings[]>()

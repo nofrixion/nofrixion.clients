@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
 import { ApiError, Tag } from '../responseTypes/ApiResponses'
-import { ApiProps, useMerchantTagsProps } from '../props/props'
+import { ApiProps, MerchantProps } from '../props/props'
 
 export const useMerchantTags = (
-  { merchantId }: useMerchantTagsProps,
+  { merchantId }: MerchantProps,
   { url, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [tags, setTags] = useState<Tag[]>()

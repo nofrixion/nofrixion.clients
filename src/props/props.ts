@@ -57,12 +57,6 @@ export interface TransactionsProps extends AccountProps {
   toDate?: Date
 }
 
-export interface useAccountsProps extends MerchantProps {}
-
-export interface useBanksProps extends MerchantProps {}
-
-export interface useMerchantTagsProps extends MerchantProps {}
-
 export interface usePaymentRequestProps extends MerchantProps, PaymentRequestProps {
   merchantId: string
 }

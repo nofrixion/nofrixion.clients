@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Account, ApiError } from '../responseTypes/ApiResponses'
 import { AccountsClient } from '../clients/AccountsClient'
-import { ApiProps, useAccountsProps } from '../props/props'
+import { ApiProps, MerchantProps } from '../props/props'
 
 export const useAccounts = (
-  { merchantId }: useAccountsProps,
+  { merchantId }: MerchantProps,
   { url, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [accounts, setAccounts] = useState<Account[]>([])
