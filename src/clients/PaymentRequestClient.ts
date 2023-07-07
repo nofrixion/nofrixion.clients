@@ -12,7 +12,7 @@ import {
   PaymentRequestPageResponse,
   PaymentRequest,
 } from '../responseTypes/ApiResponses'
-import { HttpMethod, PaymentRequestStatus } from '../responseTypes/Enums'
+import { HttpMethod } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
 /**
