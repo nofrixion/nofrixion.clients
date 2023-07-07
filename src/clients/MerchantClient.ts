@@ -1,5 +1,11 @@
 import { ApiProps, MerchantProps } from '../props/props'
-import { ApiError, Merchant, MerchantBankSettings, Tag } from '../responseTypes/ApiResponses'
+import {
+  ApiError,
+  ApiResponse,
+  Merchant,
+  MerchantBankSettings,
+  Tag,
+} from '../responseTypes/ApiResponses'
 import { HttpMethod } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
@@ -27,13 +33,8 @@ export class MerchantClient extends BaseApiClient {
    * Gets a list of merchants the user has access to.
    * @returns A list of merchants if successful. An ApiError if not successful.
    */
-  async get(): Promise<{
-    data?: Merchant[]
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<Merchant[]>(`${this.apiUrl}`, HttpMethod.GET)
-
-    return response
+  async get(): Promise<ApiResponse<Merchant[]>> {
+    return await this.httpRequest<Merchant[]>(`${this.apiUrl}`, HttpMethod.GET)
   }
 
   /**
@@ -41,16 +42,11 @@ export class MerchantClient extends BaseApiClient {
    * @param merchantId The merchant id to get the bank settings for
    * @returns A MerchantBankSettings if successful. An ApiError if not successful.
    */
-  async getBankSettings({ merchantId }: MerchantProps): Promise<{
-    data?: MerchantBankSettings
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<MerchantBankSettings>(
+  async getBankSettings({ merchantId }: MerchantProps): Promise<ApiResponse<MerchantBankSettings>> {
+    return await this.httpRequest<MerchantBankSettings>(
       `${this.apiUrl}/${merchantId}/banksettings`,
       HttpMethod.GET,
     )
-
-    return response
   }
 
   /**
@@ -58,16 +54,8 @@ export class MerchantClient extends BaseApiClient {
    * @param merchantId The merchant id to get the tags for
    * @returns A list of tags if successful. An ApiError if not successful.
    */
-  async getTags({ merchantId }: MerchantProps): Promise<{
-    data?: Tag[]
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<Tag[]>(
-      `${this.apiUrl}/${merchantId}/tags`,
-      HttpMethod.GET,
-    )
-
-    return response
+  async getTags({ merchantId }: MerchantProps): Promise<ApiResponse<Tag[]>> {
+    return await this.httpRequest<Tag[]>(`${this.apiUrl}/${merchantId}/tags`, HttpMethod.GET)
   }
 
   /**
@@ -76,20 +64,8 @@ export class MerchantClient extends BaseApiClient {
    * @param tag The tag to add
    * @returns True if successfull. An ApiError if not successful.
    */
-  async addTag(
-    { merchantId }: MerchantProps,
-    tag: Tag,
-  ): Promise<{
-    data?: Tag
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<Tag>(
-      `${this.apiUrl}/${merchantId}/tags`,
-      HttpMethod.POST,
-      tag,
-    )
-
-    return response
+  async addTag({ merchantId }: MerchantProps, tag: Tag): Promise<ApiResponse<Tag>> {
+    return await this.httpRequest<Tag>(`${this.apiUrl}/${merchantId}/tags`, HttpMethod.POST, tag)
   }
 
   /**
@@ -110,6 +86,8 @@ export class MerchantClient extends BaseApiClient {
       HttpMethod.DELETE,
     )
 
-    return !response.error ? { success: true } : { success: false, error: response.error }
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
   }
 }

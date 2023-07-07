@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios'
-import { ApiError } from '../responseTypes/ApiResponses'
+import { ApiError, ApiResponse } from '../responseTypes/ApiResponses'
 import { HttpMethod } from '../responseTypes/Enums'
 import { PagedResponseProps } from '../props/props'
 
@@ -49,10 +49,7 @@ export abstract class BaseApiClient {
       accountId: accountId,
     }: PagedResponseProps,
     url: string,
-  ): Promise<{
-    data?: TResponse
-    error?: ApiError
-  }> {
+  ): Promise<ApiResponse<TResponse>> {
     const filterParams = new URLSearchParams()
 
     if (pageNumber) {
@@ -125,10 +122,7 @@ export abstract class BaseApiClient {
     url: string,
     method: HttpMethod,
     postData?: unknown,
-  ): Promise<{
-    data?: TResponse
-    error?: ApiError
-  }> {
+  ): Promise<ApiResponse<TResponse>> {
     if (this.debug) {
       console.log(`Requesting: ${method} ${url}`)
     }
@@ -153,7 +147,9 @@ export abstract class BaseApiClient {
       })
 
       return {
+        status: 'success',
         data: data,
+        timestamp: new Date(),
       }
     } catch (ex) {
       // Axios will throw an exception for all errors
@@ -173,17 +169,21 @@ export abstract class BaseApiClient {
         }
 
         return {
+          status: 'error',
           error: error.response?.data as ApiError,
+          timestamp: new Date(),
         }
       }
 
       return {
+        status: 'error',
         error: {
           type: error.code,
           title: 'MoneyMoov Api Error.',
           status: error.status,
           detail: error.message,
         },
+        timestamp: new Date(),
       }
     }
   }

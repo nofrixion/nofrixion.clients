@@ -1,5 +1,5 @@
 import { ApiProps, TransactionsProps } from '../props/props'
-import { ApiError, TransactionPageResponse } from '../responseTypes/ApiResponses'
+import { ApiError, ApiResponse, TransactionPageResponse } from '../responseTypes/ApiResponses'
 import { BaseApiClient } from './BaseApiClient'
 
 /**
@@ -31,10 +31,13 @@ export class TransactionsClient extends BaseApiClient {
    * @param toDate Optional. The date filter to apply to retrieve payment requests created up until this date.
    * @returns A TransactionPageResponse if successful. An ApiError if not successful.
    */
-  async get({ accountId, pageNumber, pageSize, fromDate, toDate }: TransactionsProps): Promise<{
-    data?: TransactionPageResponse
-    error?: ApiError
-  }> {
+  async get({
+    accountId,
+    pageNumber,
+    pageSize,
+    fromDate,
+    toDate,
+  }: TransactionsProps): Promise<ApiResponse<TransactionPageResponse>> {
     return await this.getPagedResponse<TransactionPageResponse>(
       {
         accountId: accountId,

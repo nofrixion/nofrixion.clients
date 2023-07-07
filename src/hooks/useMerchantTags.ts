@@ -15,9 +15,9 @@ export const useMerchantTags = (
       const client = new MerchantClient({ url, authToken, onUnauthorized })
       const response = await client.getTags({ merchantId })
 
-      if (response.data) {
+      if (response.status === 'success') {
         setTags(response.data)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
     }

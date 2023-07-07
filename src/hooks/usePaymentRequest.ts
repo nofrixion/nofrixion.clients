@@ -15,9 +15,9 @@ export const usePaymentRequest = (
       const client = new PaymentRequestClient({ url, authToken, onUnauthorized })
       const response = await client.get({ paymentRequestId, merchantId })
 
-      if (response.data) {
+      if (response.status === 'success') {
         setPaymentRequest(response.data)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
     }

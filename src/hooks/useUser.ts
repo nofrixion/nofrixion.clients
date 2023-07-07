@@ -20,9 +20,9 @@ export const useUser = ({ url, authToken, onUnauthorized }: ApiProps) => {
         const client = new UsersClient({ url, authToken, onUnauthorized })
         const response = await client.getUser()
 
-        if (response.data) {
+        if (response.status === 'success') {
           setUser(response.data)
-        } else if (response.error) {
+        } else {
           setApiError(response.error)
         }
 

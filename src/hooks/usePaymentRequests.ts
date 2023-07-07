@@ -55,11 +55,11 @@ export const usePaymentRequests = (
         merchantId: merchantId,
       })
 
-      if (response.data) {
+      if (response.status === 'success') {
         setPaymentRequests(response.data.content)
         setPageNumber(response.data.pageNumber)
         setTotalRecords(response.data.totalSize)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
 

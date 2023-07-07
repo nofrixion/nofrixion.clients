@@ -22,9 +22,9 @@ export const useBanks = (
       const client = new MerchantClient({ url, authToken, onUnauthorized })
       const response = await client.getBankSettings({ merchantId })
 
-      if (response.data) {
+      if (response.status === 'success') {
         setBanks(response.data.payByBankSettings)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
 

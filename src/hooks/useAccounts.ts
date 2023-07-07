@@ -23,9 +23,9 @@ export const useAccounts = (
         const client = new AccountsClient({ url, authToken, onUnauthorized })
         const response = await client.getAccounts({ merchantId: merchantId })
 
-        if (response.data) {
+        if (response.status === 'success') {
           setAccounts(response.data)
-        } else if (response.error) {
+        } else {
           setApiError(response.error)
         }
 

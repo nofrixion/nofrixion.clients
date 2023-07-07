@@ -1,5 +1,5 @@
 import { ApiProps } from '../props/props'
-import { ApiError, UserPaymentDefaults } from '../responseTypes/ApiResponses'
+import { ApiError, ApiResponse, UserPaymentDefaults } from '../responseTypes/ApiResponses'
 import { HttpMethod } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
@@ -27,10 +27,7 @@ export class ClientSettingsClient extends BaseApiClient {
    * Gets the user payment defaults
    * @returns A UserPaymentDefaults if successful. An ApiError if not successful.
    */
-  async getUserPaymentDefaults(): Promise<{
-    data?: UserPaymentDefaults
-    error?: ApiError
-  }> {
+  async getUserPaymentDefaults(): Promise<ApiResponse<UserPaymentDefaults>> {
     const response = await this.httpRequest<UserPaymentDefaults>(
       this.paymentDefaultsUrl,
       HttpMethod.GET,
@@ -44,10 +41,9 @@ export class ClientSettingsClient extends BaseApiClient {
    * @param userPaymentDefaults The user payment defaults to save
    * @returns A UserPaymentDefaults if successful. An ApiError if not successful.
    */
-  async saveUserPaymentDefaults(userPaymentDefaults: UserPaymentDefaults): Promise<{
-    data?: UserPaymentDefaults
-    error?: ApiError
-  }> {
+  async saveUserPaymentDefaults(
+    userPaymentDefaults: UserPaymentDefaults,
+  ): Promise<ApiResponse<UserPaymentDefaults>> {
     const response = await this.httpRequest<UserPaymentDefaults>(
       this.paymentDefaultsUrl,
       HttpMethod.POST,
@@ -67,6 +63,6 @@ export class ClientSettingsClient extends BaseApiClient {
   }> {
     const response = await this.httpRequest(this.paymentDefaultsUrl, HttpMethod.DELETE)
 
-    return !response.error ? { success: true } : { success: false, error: response.error }
+    return response.status === 'success' ? { success: true } : { error: response.error }
   }
 }

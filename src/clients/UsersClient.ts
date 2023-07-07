@@ -1,5 +1,5 @@
 import { ApiProps } from '../props/props'
-import { ApiError, HttpMethod, User } from '../responseTypes'
+import { ApiError, ApiResponse, HttpMethod, User } from '../responseTypes'
 import { BaseApiClient } from './BaseApiClient'
 
 /**
@@ -26,12 +26,7 @@ export class UsersClient extends BaseApiClient {
    * Get the profile for the authenticated user.
    * @returns The user's profile if successful. An ApiError if not successful.
    */
-  async getUser(): Promise<{
-    data?: User
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<User>(`${this.url}`, HttpMethod.GET)
-
-    return response
+  async getUser(): Promise<ApiResponse<User>> {
+    return await this.httpRequest<User>(`${this.url}`, HttpMethod.GET)
   }
 }

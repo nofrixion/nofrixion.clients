@@ -11,6 +11,7 @@ import {
   PaymentRequestMinimal,
   PaymentRequestPageResponse,
   PaymentRequest,
+  ApiResponse,
 } from '../responseTypes/ApiResponses'
 import { HttpMethod } from '../responseTypes/Enums'
 import { BaseApiClient } from './BaseApiClient'
@@ -63,10 +64,7 @@ export class PaymentRequestClient extends BaseApiClient {
     maxAmount,
     tags,
     merchantId,
-  }: PaymentRequestPageProps): Promise<{
-    data?: PaymentRequestPageResponse
-    error?: ApiError
-  }> {
+  }: PaymentRequestPageProps): Promise<ApiResponse<PaymentRequestPageResponse>> {
     return await this.getPagedResponse<PaymentRequestPageResponse>(
       {
         merchantId: merchantId,
@@ -92,16 +90,14 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param includeEvents Optional. Include the events for the Payment Request. Default is false.
    * @returns A PaymentRequest if successful. An ApiError if not successful.
    */
-  async get({ paymentRequestId, includeEvents = false }: PaymentRequestProps): Promise<{
-    data?: PaymentRequest
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<PaymentRequest>(
+  async get({
+    paymentRequestId,
+    includeEvents = false,
+  }: PaymentRequestProps): Promise<ApiResponse<PaymentRequest>> {
+    return await this.httpRequest<PaymentRequest>(
       `${this.apiUrl}/${paymentRequestId}?includeEvents=${includeEvents}`,
       HttpMethod.GET,
     )
-
-    return response
   }
 
   /**
@@ -109,17 +105,8 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param paymentRequest The Payment Request to create
    * @returns The newly created PaymentRequest if successful. An ApiError if not successful.
    */
-  async create(paymentRequest: PaymentRequestCreate): Promise<{
-    data?: PaymentRequest
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<PaymentRequest>(
-      this.apiUrl,
-      HttpMethod.POST,
-      paymentRequest,
-    )
-
-    return response
+  async create(paymentRequest: PaymentRequestCreate): Promise<ApiResponse<PaymentRequest>> {
+    return await this.httpRequest<PaymentRequest>(this.apiUrl, HttpMethod.POST, paymentRequest)
   }
 
   /**
@@ -131,17 +118,12 @@ export class PaymentRequestClient extends BaseApiClient {
   async update(
     paymentRequestId: string,
     paymentRequestUpdate: PaymentRequestUpdate,
-  ): Promise<{
-    data?: PaymentRequest
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<PaymentRequest>(
+  ): Promise<ApiResponse<PaymentRequest>> {
+    return await this.httpRequest<PaymentRequest>(
       `${this.apiUrl}/${paymentRequestId}`,
       HttpMethod.PUT,
       paymentRequestUpdate,
     )
-
-    return response
   }
 
   /**
@@ -149,16 +131,11 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param paymentRequestId The Payment Request Id
    * @returns A PaymentRequestMinimal if successful. An ApiError if not successful.
    */
-  async minimal(paymentRequestId: string): Promise<{
-    data?: PaymentRequestMinimal
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<PaymentRequestMinimal>(
+  async minimal(paymentRequestId: string): Promise<ApiResponse<PaymentRequestMinimal>> {
+    return await this.httpRequest<PaymentRequestMinimal>(
       `${this.apiUrl}/${paymentRequestId}/minimal`,
       HttpMethod.GET,
     )
-
-    return response
   }
 
   /**
@@ -172,7 +149,9 @@ export class PaymentRequestClient extends BaseApiClient {
   }> {
     const response = await this.httpRequest(`${this.apiUrl}/${paymentRequestId}`, HttpMethod.DELETE)
 
-    return !response.error ? { success: true } : { success: false, error: response.error }
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
   }
 
   /**
@@ -189,7 +168,9 @@ export class PaymentRequestClient extends BaseApiClient {
       HttpMethod.POST,
     )
 
-    return !response.error ? { success: true } : { success: false, error: response.error }
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
   }
 
   /**
@@ -212,10 +193,7 @@ export class PaymentRequestClient extends BaseApiClient {
     maxAmount,
     tags,
     merchantId,
-  }: MetricsProps): Promise<{
-    data?: PaymentRequestMetrics
-    error?: ApiError
-  }> {
+  }: MetricsProps): Promise<ApiResponse<PaymentRequestMetrics>> {
     let url = `${this.apiUrl}/metrics`
 
     const filterParams = new URLSearchParams()
@@ -254,8 +232,6 @@ export class PaymentRequestClient extends BaseApiClient {
 
     url = `${url}?${filterParams.toString()}`
 
-    const response = await this.httpRequest<PaymentRequestMetrics>(url, HttpMethod.GET)
-
-    return response
+    return await this.httpRequest<PaymentRequestMetrics>(url, HttpMethod.GET)
   }
 }

@@ -14,9 +14,9 @@ export const useUserPaymentDefaults = ({ url, authToken, onUnauthorized }: ApiPr
       const client = new ClientSettingsClient({ url, authToken, onUnauthorized })
       const response = await client.getUserPaymentDefaults()
 
-      if (response.data) {
+      if (response.status === 'success') {
         setUserPaymentDefaults(response.data)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
       setisUserPaymentDefaultsLoading(false)

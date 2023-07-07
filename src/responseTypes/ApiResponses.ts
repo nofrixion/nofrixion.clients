@@ -149,10 +149,17 @@ export type ApiError = {
   detail: string
 }
 
-export type ApiResponse<T> = {
-  data?: T
-  error?: ApiError
-}
+export type ApiResponse<T> =
+  | {
+      status: 'success'
+      data: T
+      timestamp: Date
+    }
+  | {
+      status: 'error'
+      error: ApiError
+      timestamp: Date
+    }
 
 export type Tag = {
   id: string

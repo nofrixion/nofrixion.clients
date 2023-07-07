@@ -41,9 +41,9 @@ export const usePaymentRequestMetrics = (
         merchantId: merchantId,
       })
 
-      if (response.data) {
+      if (response.status === 'success') {
         setMetrics(response.data)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
       setIsLoading(false)

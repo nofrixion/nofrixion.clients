@@ -24,9 +24,9 @@ export const useTransactions = (
 
         const response = await client.get({ accountId, pageNumber, pageSize })
 
-        if (response.data) {
+        if (response.status === 'success') {
           setTransactions(response.data.content)
-        } else if (response.error) {
+        } else {
           setApiError(response.error)
         }
 

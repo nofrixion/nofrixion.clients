@@ -21,9 +21,9 @@ export const useMerchants = ({ url, authToken, onUnauthorized }: ApiProps) => {
 
         const response = await client.get()
 
-        if (response.data) {
+        if (response.status === 'success') {
           setMerchants(response.data)
-        } else if (response.error) {
+        } else {
           setApiError(response.error)
         }
 
