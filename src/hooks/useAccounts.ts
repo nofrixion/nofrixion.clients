@@ -5,7 +5,7 @@ import { ApiProps, MerchantProps } from '../types/props'
 
 export const useAccounts = (
   { merchantId }: MerchantProps,
-  { url, authToken, onUnauthorized }: ApiProps,
+  { apiUrl, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [apiError, setApiError] = useState<ApiError>()
@@ -20,7 +20,7 @@ export const useAccounts = (
 
         setIsLoading(true)
 
-        const client = new AccountsClient({ url, authToken, onUnauthorized })
+        const client = new AccountsClient({ apiUrl, authToken, onUnauthorized })
         const response = await client.getAccounts({ merchantId: merchantId })
 
         if (response.status === 'success') {
@@ -37,7 +37,7 @@ export const useAccounts = (
     }
 
     fetchAccounts()
-  }, [authToken, merchantId, onUnauthorized, url])
+  }, [authToken, merchantId, onUnauthorized, apiUrl])
 
   return { accounts, isLoading, apiError }
 }

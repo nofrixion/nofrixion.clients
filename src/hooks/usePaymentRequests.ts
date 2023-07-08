@@ -22,7 +22,7 @@ export const usePaymentRequests = (
     maxAmount,
     tags,
   }: usePaymentRequestsProps,
-  { url, authToken, onUnauthorized }: ApiProps,
+  { apiUrl, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [paymentRequests, setPaymentRequests] = useState<PaymentRequest[] | undefined>(undefined)
   const [pageNumber, setPageNumber] = useState(1)
@@ -38,7 +38,7 @@ export const usePaymentRequests = (
 
       setIsLoading(true)
 
-      const client = new PaymentRequestClient({ url, authToken, onUnauthorized })
+      const client = new PaymentRequestClient({ apiUrl, authToken, onUnauthorized })
 
       const response = await client.getAll({
         pageNumber: initialPageNumber,
@@ -92,7 +92,7 @@ export const usePaymentRequests = (
     pageNumber,
     fromDateMS,
     search,
-    url,
+    apiUrl,
     initialPageNumber,
     toDateMS,
   ])

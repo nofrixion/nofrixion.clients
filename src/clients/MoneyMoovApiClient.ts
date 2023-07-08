@@ -10,7 +10,7 @@ import { UsersClient } from './UsersClient'
  * The MoneyMoov Api Client provides access to the api endpoints in the MoneyMoov api.
  */
 export class MoneyMoovApiClient {
-  apiBaseUrl: string
+  apiUrl: string
   authToken: string
 
   /**
@@ -45,42 +45,45 @@ export class MoneyMoovApiClient {
 
   /**
    *
-   * @param apiBaseUrl The base api url.
    * Production: https://api.nofrixion.com/api/v1
    * Sandbox: https://api-sandbox.nofrixion.com/api/v1
-   * @param url The url to the accounts api.
+   * @param apiUrl The base api url.
    * @param authToken The OAUTH token used to authenticate with the api.
    * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
-  constructor({ url, authToken, onUnauthorized }: ApiProps) {
-    this.apiBaseUrl = url
+  constructor({ apiUrl, authToken, onUnauthorized }: ApiProps) {
+    this.apiUrl = apiUrl
     this.authToken = authToken
 
     this.PaymentRequests = new PaymentRequestClient({
-      url: url,
+      apiUrl,
       authToken: authToken,
       onUnauthorized: onUnauthorized,
     })
     this.ClientSettings = new ClientSettingsClient({
-      url: url,
+      apiUrl,
       authToken: authToken,
       onUnauthorized: onUnauthorized,
     })
     this.Merchants = new MerchantClient({
-      url: url,
+      apiUrl,
       authToken: authToken,
       onUnauthorized: onUnauthorized,
     })
     this.Accounts = new AccountsClient({
-      url: url,
+      apiUrl,
       authToken: authToken,
       onUnauthorized: onUnauthorized,
     })
     this.Transactions = new TransactionsClient({
-      url: url,
+      apiUrl,
       authToken: authToken,
       onUnauthorized: onUnauthorized,
     })
-    this.Users = new UsersClient({ url: url, authToken: authToken, onUnauthorized: onUnauthorized })
+    this.Users = new UsersClient({
+      apiUrl,
+      authToken: authToken,
+      onUnauthorized: onUnauthorized,
+    })
   }
 }

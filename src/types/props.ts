@@ -31,7 +31,7 @@ export interface FilterResponseProps {
 export interface MetricsProps extends FilterResponseProps, MerchantProps {}
 
 export interface ApiProps {
-  url: string
+  apiUrl: string
   authToken: string
   onUnauthorized: () => void
 }

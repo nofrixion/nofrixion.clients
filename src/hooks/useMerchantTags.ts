@@ -5,14 +5,14 @@ import { ApiProps, MerchantProps } from '../types/props'
 
 export const useMerchantTags = (
   { merchantId }: MerchantProps,
-  { url, authToken, onUnauthorized }: ApiProps,
+  { apiUrl, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [tags, setTags] = useState<Tag[]>()
   const [apiError, setApiError] = useState<ApiError>()
 
   useEffect(() => {
     const fetchMerchantTags = async () => {
-      const client = new MerchantClient({ url, authToken, onUnauthorized })
+      const client = new MerchantClient({ apiUrl, authToken, onUnauthorized })
       const response = await client.getTags({ merchantId })
 
       if (response.status === 'success') {
@@ -22,7 +22,7 @@ export const useMerchantTags = (
       }
     }
     fetchMerchantTags()
-  }, [authToken, merchantId, onUnauthorized, url])
+  }, [authToken, merchantId, onUnauthorized, apiUrl])
 
   return {
     tags,
