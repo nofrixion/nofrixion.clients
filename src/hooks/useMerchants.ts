@@ -1,6 +1,6 @@
 import { MerchantClient } from '../clients'
-import { ApiProps } from '../props/props'
-import { ApiError, Merchant } from '../responseTypes/ApiResponses'
+import { ApiProps } from '../types/props'
+import { ApiError, Merchant } from '../types/ApiResponses'
 import { useEffect, useState } from 'react'
 
 export const useMerchants = ({ url, authToken, onUnauthorized }: ApiProps) => {

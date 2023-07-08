@@ -1,12 +1,6 @@
-import { ApiProps, MerchantProps } from '../props/props'
-import {
-  ApiError,
-  ApiResponse,
-  Merchant,
-  MerchantBankSettings,
-  Tag,
-} from '../responseTypes/ApiResponses'
-import { HttpMethod } from '../responseTypes/Enums'
+import { ApiProps, MerchantProps } from '../types/props'
+import { ApiError, ApiResponse, Merchant, MerchantBankSettings, Tag } from '../types/ApiResponses'
+import { HttpMethod } from '../types/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
 /**

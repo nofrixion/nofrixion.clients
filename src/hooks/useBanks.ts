@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
-import { ApiError, BankSettings } from '../responseTypes/ApiResponses'
-import { ApiProps, MerchantProps } from '../props/props'
+import { ApiError, BankSettings } from '../types/ApiResponses'
+import { ApiProps, MerchantProps } from '../types/props'
 
 export const useBanks = (
   { merchantId }: MerchantProps,

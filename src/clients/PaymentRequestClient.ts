@@ -3,8 +3,8 @@ import {
   PaymentRequestPageProps,
   MetricsProps,
   ApiProps,
-} from '../props/props'
-import { PaymentRequestCreate, PaymentRequestUpdate } from '../responseTypes/ApiRequests'
+} from '../types/props'
+import { PaymentRequestCreate, PaymentRequestUpdate } from '../types/ApiRequests'
 import {
   ApiError,
   PaymentRequestMetrics,
@@ -12,8 +12,8 @@ import {
   PaymentRequestPageResponse,
   PaymentRequest,
   ApiResponse,
-} from '../responseTypes/ApiResponses'
-import { HttpMethod } from '../responseTypes/Enums'
+} from '../types/ApiResponses'
+import { HttpMethod } from '../types/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
 /**

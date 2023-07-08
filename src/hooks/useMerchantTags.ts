@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
-import { ApiError, Tag } from '../responseTypes/ApiResponses'
-import { ApiProps, MerchantProps } from '../props/props'
+import { ApiError, Tag } from '../types/ApiResponses'
+import { ApiProps, MerchantProps } from '../types/props'
 
 export const useMerchantTags = (
   { merchantId }: MerchantProps,

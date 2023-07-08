@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { PaymentRequestClient } from '../clients/PaymentRequestClient'
-import { ApiError, PaymentRequestMetrics } from '../responseTypes/ApiResponses'
-import { ApiProps, usePaymentRequestMetricsProps } from '../props/props'
+import { ApiError, PaymentRequestMetrics } from '../types/ApiResponses'
+import { ApiProps, usePaymentRequestMetricsProps } from '../types/props'
 
 export const usePaymentRequestMetrics = (
   {

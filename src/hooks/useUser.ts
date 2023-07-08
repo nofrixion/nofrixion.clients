@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ApiError, User } from '../responseTypes'
+import { ApiError, User } from '../types'
 import { UsersClient } from '../clients'
-import { ApiProps } from '../props/props'
+import { ApiProps } from '../types/props'
 
 export const useUser = ({ url, authToken, onUnauthorized }: ApiProps) => {
   const [user, setUser] = useState<User>()

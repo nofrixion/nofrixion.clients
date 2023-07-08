@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { formatPaymentRequestSortExpression } from '../responseTypes/formatters'
-import { ApiError, PaymentRequest } from '../responseTypes/ApiResponses'
+import { formatPaymentRequestSortExpression } from '../types/formatters'
+import { ApiError, PaymentRequest } from '../types/ApiResponses'
 import { PaymentRequestClient } from '../clients'
-import { ApiProps, usePaymentRequestsProps } from '../props/props'
+import { ApiProps, usePaymentRequestsProps } from '../types/props'
 
 export const usePaymentRequests = (
   {

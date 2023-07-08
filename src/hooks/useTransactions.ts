@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ApiError, Transaction } from '../responseTypes/ApiResponses'
+import { ApiError, Transaction } from '../types/ApiResponses'
 import { TransactionsClient } from '../clients/TransactionsClient'
-import { ApiProps, TransactionsProps } from '../props/props'
+import { ApiProps, TransactionsProps } from '../types/props'
 
 export const useTransactions = (
   { url, authToken, onUnauthorized }: ApiProps,

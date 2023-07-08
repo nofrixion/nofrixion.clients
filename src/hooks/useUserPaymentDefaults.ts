@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ApiError, UserPaymentDefaults } from '../responseTypes/ApiResponses'
+import { ApiError, UserPaymentDefaults } from '../types/ApiResponses'
 import { ClientSettingsClient } from '../clients/ClientSettingsClient'
-import { ApiProps } from '../props/props'
+import { ApiProps } from '../types/props'
 
 export const useUserPaymentDefaults = ({ url, authToken, onUnauthorized }: ApiProps) => {
   const [userPaymentDefaults, setUserPaymentDefaults] = useState<UserPaymentDefaults>()

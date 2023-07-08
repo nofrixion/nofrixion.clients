@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { PaymentRequestClient } from '../clients/PaymentRequestClient'
-import { ApiError, PaymentRequest } from '../responseTypes/ApiResponses'
-import { ApiProps, usePaymentRequestProps } from '../props/props'
+import { ApiError, PaymentRequest } from '../types/ApiResponses'
+import { ApiProps, usePaymentRequestProps } from '../types/props'
 
 export const usePaymentRequest = (
   { paymentRequestId, merchantId }: usePaymentRequestProps,

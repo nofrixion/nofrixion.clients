@@ -1,4 +1,4 @@
-import { SortDirection } from '../responseTypes'
+import { SortDirection } from './Enums'
 
 export interface PagedResponseProps extends FilterResponseProps, MerchantProps, AccountProps {
   pageNumber?: number

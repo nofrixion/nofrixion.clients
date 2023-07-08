@@ -1,4 +1,4 @@
-import { ApiProps } from '../props/props'
+import { ApiProps } from '../types/props'
 import { AccountsClient } from './AccountsClient'
 import { ClientSettingsClient } from './ClientSettingsClient'
 import { MerchantClient } from './MerchantClient'
