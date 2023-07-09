@@ -34,30 +34,32 @@ export abstract class BaseApiClient {
    */
   protected async getPagedResponse<TResponse>(
     {
-      merchantId: merchantId,
-      pageNumber: pageNumber,
-      pageSize: pageSize,
-      sort: sort,
-      fromDate: fromDate,
-      toDate: toDate,
-      status: status,
-      search: search,
-      currency: currency,
-      minAmount: minAmount,
-      maxAmount: maxAmount,
-      tags: tags,
-      accountId: accountId,
+      merchantId,
+      pageNumber,
+      pageSize,
+      sort,
+      fromDate,
+      toDate,
+      status,
+      search,
+      currency,
+      minAmount,
+      maxAmount,
+      tags,
+      accountId,
     }: PagedResponseProps,
     url: string,
   ): Promise<ApiResponse<TResponse>> {
     const filterParams = new URLSearchParams()
 
     if (pageNumber) {
+      // The MoneyMoov api uses page and pageNumber
       filterParams.append('page', pageNumber.toString())
       filterParams.append('pageNumber', pageNumber.toString())
     }
 
     if (pageSize) {
+      // The MoneyMoov api uses size and pageSize
       filterParams.append('size', pageSize.toString())
       filterParams.append('pageSize', pageSize.toString())
     }
