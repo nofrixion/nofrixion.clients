@@ -4,11 +4,11 @@ import { HttpMethod } from '../types/Enums'
 import { PagedResponseProps } from '../types/props'
 
 export abstract class BaseApiClient {
-  authToken: string
+  authToken: string | undefined
   onUnauthorized: () => void
   debug: boolean
 
-  constructor(authToken: string, onUnauthorized: () => void, debug?: boolean) {
+  constructor(authToken: string | undefined, onUnauthorized: () => void, debug?: boolean) {
     this.authToken = authToken
     this.onUnauthorized = onUnauthorized
     this.debug = debug ?? false

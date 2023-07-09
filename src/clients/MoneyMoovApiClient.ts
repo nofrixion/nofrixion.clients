@@ -11,7 +11,7 @@ import { UsersClient } from './UsersClient'
  */
 export class MoneyMoovApiClient {
   apiUrl: string
-  authToken: string
+  authToken: string | undefined
 
   /**
    * Provides access to the MoneyMoov PaymentRequests api.
