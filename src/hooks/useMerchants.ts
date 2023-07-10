@@ -35,7 +35,7 @@ export const useMerchants = ({ apiUrl, authToken, onUnauthorized }: ApiProps) =>
     }
 
     fetchMerchants()
-  }, [authToken, merchants, onUnauthorized, apiUrl])
+  }, [apiUrl, authToken, onUnauthorized])
 
   return { merchants, isLoading, apiError }
 }
