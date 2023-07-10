@@ -176,7 +176,7 @@ export class PaymentRequestClient extends BaseApiClient {
    * Gets the metrics for Payment Requests
    * @param fromDate Optional. The date filter to apply to retrieve payment requests metrics after this date.
    * @param toDate Optional. The date filter to apply to retrieve payment requests metrics up until this date.
-   * @param search Optional. The search filter to apply to retrieve payment request metrics with this search text in the description, title, merchant name or contact name.
+   * @param search Optional. The search filter to apply to retrieve payment request metrics with this search text in the description, title, merchant name, contact mail or contact names.
    * @param currency Optional. The currency filter to apply to retrieve payment request metrics with this currency.
    * @param minAmount Optional. The minimum amount filter to apply to retrieve payment request metrics with this minimum amount.
    * @param maxAmount Optional. The maximum amount filter to apply to retrieve payment request metrics with this maximum amount.
@@ -232,5 +232,34 @@ export class PaymentRequestClient extends BaseApiClient {
     url = `${url}?${filterParams.toString()}`
 
     return await this.httpRequest<PaymentRequestMetrics>(url, HttpMethod.GET)
+  }
+
+  /**
+   * Captures a Payment Request attempt.
+   * @param paymentRequestId The Payment Request Id
+   * @param authorizationId Capture authorization Id
+   * @param amount Amount to capture. If set to 0, the remaining amount will be captured.
+   * @returns True if successfull. An ApiError if not successful.
+   */
+  async captureCardPayment(
+    paymentRequestId: string,
+    authorizationId: string,
+    amount?: number,
+  ): Promise<{
+    success?: boolean
+    error?: ApiError
+  }> {
+    const response = await this.httpRequest(
+      `${this.apiUrl}/${paymentRequestId}/card/capture`,
+      HttpMethod.POST,
+      {
+        authorizationID: authorizationId,
+        amount: amount ?? 0,
+      },
+    )
+
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
   }
 }
