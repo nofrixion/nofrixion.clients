@@ -1,33 +1,42 @@
 import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
-import { ApiError, BankSettings } from '../responseTypes/ApiResponses'
+import { ApiError, BankSettings } from '../types/ApiResponses'
+import { ApiProps, MerchantProps } from '../types/props'
 
 export const useBanks = (
-  apiUrl: string,
-  authToken: string,
-  merchantId: string,
-  onUnauthorized: () => void,
+  { merchantId }: MerchantProps,
+  { apiUrl, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [banks, setBanks] = useState<BankSettings[]>()
   const [apiError, setApiError] = useState<ApiError>()
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchBanks = async () => {
-      const client = new MerchantClient(apiUrl, authToken, merchantId, onUnauthorized)
-      const response = await client.getBankSettings()
+      if (!authToken || !merchantId) {
+        return
+      }
 
-      if (response.data) {
+      setIsLoading(true)
+
+      const client = new MerchantClient({ apiUrl, authToken, onUnauthorized })
+      const response = await client.getBankSettings({ merchantId })
+
+      if (response.status === 'success') {
         setBanks(response.data.payByBankSettings)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
+
+      setIsLoading(false)
     }
 
     fetchBanks()
-  }, [apiUrl, authToken, merchantId, onUnauthorized])
+  }, [authToken, merchantId, onUnauthorized, apiUrl])
 
   return {
     banks,
     apiError,
+    isLoading,
   }
 }

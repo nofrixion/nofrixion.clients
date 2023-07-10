@@ -1,5 +1,6 @@
-import { ApiError, UserPaymentDefaults } from '../responseTypes/ApiResponses'
-import { HttpMethod } from '../responseTypes/Enums'
+import { ApiProps } from '../types/props'
+import { ApiError, ApiResponse, UserPaymentDefaults } from '../types/ApiResponses'
+import { HttpMethod } from '../types/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
 /**
@@ -10,24 +11,22 @@ export class ClientSettingsClient extends BaseApiClient {
   paymentDefaultsUrl: string
 
   /**
-   * @param apiBaseUrl The base api url.
    * Production: https://api.nofrixion.com/api/v1
    * Sandbox: https://api-sandbox.nofrixion.com/api/v1
+   * @param apiUrl The base api url.
    * @param authToken The OAUTH token used to authenticate with the api.
+   * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
-  constructor(apiBaseUrl: string, authToken: string, onUnauthorized: () => void) {
-    super(authToken, onUnauthorized)
-    this.paymentDefaultsUrl = `${apiBaseUrl}/clientsettings/paymentdefaults`
+  constructor({ ...props }: ApiProps) {
+    super(props.authToken, props.onUnauthorized)
+    this.paymentDefaultsUrl = `${props.apiUrl}/clientsettings/paymentdefaults`
   }
 
   /**
    * Gets the user payment defaults
    * @returns A UserPaymentDefaults if successful. An ApiError if not successful.
    */
-  async getUserPaymentDefaults(): Promise<{
-    data?: UserPaymentDefaults
-    error?: ApiError
-  }> {
+  async getUserPaymentDefaults(): Promise<ApiResponse<UserPaymentDefaults>> {
     const response = await this.httpRequest<UserPaymentDefaults>(
       this.paymentDefaultsUrl,
       HttpMethod.GET,
@@ -41,10 +40,9 @@ export class ClientSettingsClient extends BaseApiClient {
    * @param userPaymentDefaults The user payment defaults to save
    * @returns A UserPaymentDefaults if successful. An ApiError if not successful.
    */
-  async saveUserPaymentDefaults(userPaymentDefaults: UserPaymentDefaults): Promise<{
-    data?: UserPaymentDefaults
-    error?: ApiError
-  }> {
+  async saveUserPaymentDefaults(
+    userPaymentDefaults: UserPaymentDefaults,
+  ): Promise<ApiResponse<UserPaymentDefaults>> {
     const response = await this.httpRequest<UserPaymentDefaults>(
       this.paymentDefaultsUrl,
       HttpMethod.POST,
@@ -64,6 +62,6 @@ export class ClientSettingsClient extends BaseApiClient {
   }> {
     const response = await this.httpRequest(this.paymentDefaultsUrl, HttpMethod.DELETE)
 
-    return !response.error ? { success: true } : { success: false, error: response.error }
+    return response.status === 'success' ? { success: true } : { error: response.error }
   }
 }

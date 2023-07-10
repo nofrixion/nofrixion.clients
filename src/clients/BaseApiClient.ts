@@ -1,13 +1,14 @@
 import axios, { AxiosError } from 'axios'
-import { ApiError } from '../responseTypes/ApiResponses'
-import { HttpMethod } from '../responseTypes/Enums'
+import { ApiError, ApiResponse } from '../types/ApiResponses'
+import { HttpMethod } from '../types/Enums'
+import { PagedResponseProps } from '../types/props'
 
 export abstract class BaseApiClient {
-  authToken: string
+  authToken: string | undefined
   onUnauthorized: () => void
   debug: boolean
 
-  constructor(authToken: string, onUnauthorized: () => void, debug?: boolean) {
+  constructor(authToken: string | undefined, onUnauthorized: () => void, debug?: boolean) {
     this.authToken = authToken
     this.onUnauthorized = onUnauthorized
     this.debug = debug ?? false
@@ -23,31 +24,49 @@ export abstract class BaseApiClient {
    * @param fromDate Optional. The date filter to apply to retrieve payment requests created after this date.
    * @param toDate Optional. The date filter to apply to retrieve payment requests created up until this date.
    * @param status Optional. The status filter to apply to retrieve records with this status.
+   * @param search Optional. The search filter to apply to retrieve records with this search text in the description, title, merchant name or contact name.
+   * @param currency Optional. The currency filter to apply to retrieve records with this currency.
+   * @param minAmount Optional. The minimum amount filter to apply to retrieve records with this minimum amount.
+   * @param maxAmount Optional. The maximum amount filter to apply to retrieve records with this maximum amount.
+   * @param tags Optional. The tags filter to apply to retrieve records with these tags.
+   * @param accountId Optional. The account id filter to apply to retrieve records with this account id.
    * @returns A Paged response of type TResponse if successful. An ApiError if not successful.
    */
   protected async getPagedResponse<TResponse>(
+    {
+      merchantId,
+      pageNumber,
+      pageSize,
+      sort,
+      fromDate,
+      toDate,
+      status,
+      search,
+      currency,
+      minAmount,
+      maxAmount,
+      tags,
+      accountId,
+    }: PagedResponseProps,
     url: string,
-    merchantId: string,
-    pageNumber = 1,
-    pageSize = 20,
-    sort?: string,
-    fromDate?: Date,
-    toDate?: Date,
-    status?: string,
-    search?: string,
-    currency?: string,
-    minAmount?: number,
-    maxAmount?: number,
-    tags?: string[],
-  ): Promise<{
-    data?: TResponse
-    error?: ApiError
-  }> {
+  ): Promise<ApiResponse<TResponse>> {
     const filterParams = new URLSearchParams()
 
-    filterParams.append('merchantID', merchantId)
-    filterParams.append('page', pageNumber.toString())
-    filterParams.append('size', pageSize.toString())
+    if (pageNumber) {
+      // The MoneyMoov api uses page and pageNumber
+      filterParams.append('page', pageNumber.toString())
+      filterParams.append('pageNumber', pageNumber.toString())
+    }
+
+    if (pageSize) {
+      // The MoneyMoov api uses size and pageSize
+      filterParams.append('size', pageSize.toString())
+      filterParams.append('pageSize', pageSize.toString())
+    }
+
+    if (merchantId) {
+      filterParams.append('merchantID', merchantId)
+    }
 
     if (sort) {
       filterParams.append('sort', sort)
@@ -85,6 +104,10 @@ export abstract class BaseApiClient {
       tags.forEach((tag) => filterParams.append('tags', tag))
     }
 
+    if (accountId) {
+      filterParams.append('accountId', accountId)
+    }
+
     url = `${url}?${filterParams.toString()}`
 
     return await this.httpRequest<TResponse>(url, HttpMethod.GET)
@@ -101,10 +124,7 @@ export abstract class BaseApiClient {
     url: string,
     method: HttpMethod,
     postData?: unknown,
-  ): Promise<{
-    data?: TResponse
-    error?: ApiError
-  }> {
+  ): Promise<ApiResponse<TResponse>> {
     if (this.debug) {
       console.log(`Requesting: ${method} ${url}`)
     }
@@ -129,7 +149,9 @@ export abstract class BaseApiClient {
       })
 
       return {
+        status: 'success',
         data: data,
+        timestamp: new Date(),
       }
     } catch (ex) {
       // Axios will throw an exception for all errors
@@ -149,17 +171,21 @@ export abstract class BaseApiClient {
         }
 
         return {
+          status: 'error',
           error: error.response?.data as ApiError,
+          timestamp: new Date(),
         }
       }
 
       return {
+        status: 'error',
         error: {
           type: error.code,
           title: 'MoneyMoov Api Error.',
           status: error.status,
           detail: error.message,
         },
+        timestamp: new Date(),
       }
     }
   }

@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
-import { ApiError, UserPaymentDefaults } from '../responseTypes/ApiResponses'
+import { ApiError, UserPaymentDefaults } from '../types/ApiResponses'
 import { ClientSettingsClient } from '../clients/ClientSettingsClient'
+import { ApiProps } from '../types/props'
 
-export const useUserPaymentDefaults = (
-  apiUrl: string,
-  authToken: string,
-  onUnauthorized: () => void,
-) => {
+export const useUserPaymentDefaults = ({ apiUrl, authToken, onUnauthorized }: ApiProps) => {
   const [userPaymentDefaults, setUserPaymentDefaults] = useState<UserPaymentDefaults>()
   const [apiError, setApiError] = useState<ApiError>()
   const [isUserPaymentDefaultsLoading, setisUserPaymentDefaultsLoading] = useState<boolean>(true)
@@ -14,19 +11,19 @@ export const useUserPaymentDefaults = (
   useEffect(() => {
     const fetchUserPaymentDefaults = async () => {
       setisUserPaymentDefaultsLoading(true)
-      const client = new ClientSettingsClient(apiUrl, authToken, onUnauthorized)
+      const client = new ClientSettingsClient({ apiUrl, authToken, onUnauthorized })
       const response = await client.getUserPaymentDefaults()
 
-      if (response.data) {
+      if (response.status === 'success') {
         setUserPaymentDefaults(response.data)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
       setisUserPaymentDefaultsLoading(false)
     }
 
     fetchUserPaymentDefaults()
-  }, [apiUrl, authToken, onUnauthorized])
+  }, [authToken, onUnauthorized, apiUrl])
 
   return {
     userPaymentDefaults,

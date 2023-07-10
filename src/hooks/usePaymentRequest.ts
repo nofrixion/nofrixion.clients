@@ -1,31 +1,29 @@
 import { useEffect, useState } from 'react'
 import { PaymentRequestClient } from '../clients/PaymentRequestClient'
-import { ApiError, PaymentRequest } from '../responseTypes/ApiResponses'
+import { ApiError, PaymentRequest } from '../types/ApiResponses'
+import { ApiProps, usePaymentRequestProps } from '../types/props'
 
 export const usePaymentRequest = (
-  paymentRequestId: string,
-  apiUrl: string,
-  authToken: string,
-  merchantId: string,
-  onUnauthorized: () => void,
+  { paymentRequestId, merchantId }: usePaymentRequestProps,
+  { apiUrl, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [paymentRequest, setPaymentRequest] = useState<PaymentRequest>()
   const [apiError, setApiError] = useState<ApiError>()
 
   useEffect(() => {
     const fetchPaymentRequest = async () => {
-      const client = new PaymentRequestClient(apiUrl, authToken, merchantId, onUnauthorized)
-      const response = await client.get(paymentRequestId)
+      const client = new PaymentRequestClient({ apiUrl, authToken, onUnauthorized })
+      const response = await client.get({ paymentRequestId, merchantId })
 
-      if (response.data) {
+      if (response.status === 'success') {
         setPaymentRequest(response.data)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
     }
 
     fetchPaymentRequest()
-  }, [paymentRequestId, apiUrl, authToken, merchantId, onUnauthorized])
+  }, [paymentRequestId, authToken, merchantId, onUnauthorized, apiUrl])
 
   return {
     paymentRequest,

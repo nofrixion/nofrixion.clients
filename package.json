@@ -1,7 +1,7 @@
 {
   "name": "@nofrixion/moneymoov",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,7 +13,7 @@
     "prepare": "husky install",
     "pretty-quick": "pretty-quick --staged"
   },
-  "main": "./dist/nofrixion-clients.umd.js",
+  "main": "./dist/nofrixion-clients.es.js",
   "module": "./dist/nofrixion-clients.es.js",
   "types": "./dist/index.d.ts",
   "files": [

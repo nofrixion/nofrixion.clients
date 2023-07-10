@@ -1,4 +1,5 @@
 import {
+  AccountIdentifierType,
   AddressType,
   CardTokenCreateModes,
   Currency,
@@ -148,10 +149,17 @@ export type ApiError = {
   detail: string
 }
 
-export type ApiResponse<T> = {
-  data?: T
-  error?: ApiError
-}
+export type ApiResponse<T> =
+  | {
+      status: 'success'
+      data: T
+      timestamp: Date
+    }
+  | {
+      status: 'error'
+      error: ApiError
+      timestamp: Date
+    }
 
 export type Tag = {
   id: string
@@ -208,4 +216,85 @@ export type BankSettings = {
   businessInstitutionID?: string
   message?: string
   messageImageUrl?: string
+}
+
+export interface Account {
+  id: string
+  merchantID: string
+  accountName: string
+  accountNumber: string
+  availableBalance: number
+  balance: number
+  currency: Currency
+  displayName: string
+  iban: string
+  sortCode: string
+  summary: string
+  identifier: AccountIdentifier
+  isDefault: boolean
+}
+
+export interface AccountIdentifier {
+  type: AccountIdentifierType
+  currency: string
+  bic: string
+  iban: string
+  accountNumber: string
+  sortCode: string
+}
+
+export interface Merchant {
+  id: string
+  name: string
+  enabled: boolean
+  companyID: string
+  merchantCategoryCode: string
+  shortName: string
+  paymentAccountLimit: number
+  inserted: string
+  jurisdiction: string
+  hostedPayVersion: number
+  webHookLimit: number
+  displayQrOnHostedPay: boolean
+  yourRole: string
+  userRoles: any[] // TODO: Add type
+  tags: any[]
+  paymentAccounts: any[] // TODO: Add type
+}
+
+export interface Transaction {
+  id: string
+  merchantID: string
+  accountID: string
+  amount: number
+  currency: Currency
+  description: string
+  transactionDate: string
+  yourReference: string
+  theirReference: string
+  balance: number
+  counterparty: Counterparty
+}
+
+export interface Counterparty {
+  accountID: string
+  name: string
+  emailAddress: string
+  phoneNumber: string
+  identifier: AccountIdentifier
+}
+
+export interface TransactionPageResponse {
+  content: Transaction[]
+  pageNumber: number
+  pageSize: number
+  totalPages: number
+  totalSize: number
+}
+
+export interface User {
+  id: string
+  emailAddress: string
+  firstName: string
+  lastName: string
 }
