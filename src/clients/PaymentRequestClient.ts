@@ -1,12 +1,19 @@
-import { PaymentRequestCreate, PaymentRequestUpdate } from '../responseTypes/ApiRequests'
+import {
+  PaymentRequestProps,
+  PaymentRequestPageProps,
+  MetricsProps,
+  ApiProps,
+} from '../types/props'
+import { PaymentRequestCreate, PaymentRequestUpdate } from '../types/ApiRequests'
 import {
   ApiError,
   PaymentRequestMetrics,
   PaymentRequestMinimal,
   PaymentRequestPageResponse,
   PaymentRequest,
-} from '../responseTypes/ApiResponses'
-import { HttpMethod, PaymentRequestStatus } from '../responseTypes/Enums'
+  ApiResponse,
+} from '../types/ApiResponses'
+import { HttpMethod } from '../types/Enums'
 import { BaseApiClient } from './BaseApiClient'
 
 /**
@@ -15,24 +22,17 @@ import { BaseApiClient } from './BaseApiClient'
  */
 export class PaymentRequestClient extends BaseApiClient {
   apiUrl: string
-  merchantId: string
 
   /**
-   * @param apiBaseUrl The base api url.
    * Production: https://api.nofrixion.com/api/v1
    * Sandbox: https://api-sandbox.nofrixion.com/api/v1
+   * @param apiUrl The base api url.
    * @param authToken The OAUTH token used to authenticate with the api.
-   * @param merchantId The merchant id to use when accessing the api.
+   * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
-  constructor(
-    apiBaseUrl: string,
-    authToken: string,
-    merchantId: string,
-    onUnauthorized: () => void,
-  ) {
-    super(authToken, onUnauthorized)
-    this.apiUrl = `${apiBaseUrl}/paymentrequests`
-    this.merchantId = merchantId
+  constructor({ ...props }: ApiProps) {
+    super(props.authToken, props.onUnauthorized)
+    this.apiUrl = `${props.apiUrl}/paymentrequests`
   }
 
   /**
@@ -50,36 +50,36 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param tags Optional. The tags filter to apply to retrieve records with these tags.
    * @returns A PaymentRequestPageResponse if successful. An ApiError if not successful.
    */
-  async getAll(
+  async getAll({
     pageNumber = 1,
     pageSize = 20,
-    sort?: string,
-    fromDate?: Date,
-    toDate?: Date,
-    status?: PaymentRequestStatus,
-    search?: string,
-    currency?: string,
-    minAmount?: number,
-    maxAmount?: number,
-    tags?: string[],
-  ): Promise<{
-    data?: PaymentRequestPageResponse
-    error?: ApiError
-  }> {
+    sort,
+    fromDate,
+    toDate,
+    status,
+    search,
+    currency,
+    minAmount,
+    maxAmount,
+    tags,
+    merchantId,
+  }: PaymentRequestPageProps): Promise<ApiResponse<PaymentRequestPageResponse>> {
     return await this.getPagedResponse<PaymentRequestPageResponse>(
+      {
+        merchantId: merchantId,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        sort: sort,
+        fromDate: fromDate,
+        toDate: toDate,
+        status: status,
+        search: search,
+        currency: currency,
+        minAmount: minAmount,
+        maxAmount: maxAmount,
+        tags: tags,
+      },
       this.apiUrl,
-      this.merchantId,
-      pageNumber,
-      pageSize,
-      sort,
-      fromDate,
-      toDate,
-      status,
-      search,
-      currency,
-      minAmount,
-      maxAmount,
-      tags,
     )
   }
 
@@ -89,19 +89,14 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param includeEvents Optional. Include the events for the Payment Request. Default is false.
    * @returns A PaymentRequest if successful. An ApiError if not successful.
    */
-  async get(
-    paymentRequestId: string,
+  async get({
+    paymentRequestId,
     includeEvents = false,
-  ): Promise<{
-    data?: PaymentRequest
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<PaymentRequest>(
+  }: PaymentRequestProps): Promise<ApiResponse<PaymentRequest>> {
+    return await this.httpRequest<PaymentRequest>(
       `${this.apiUrl}/${paymentRequestId}?includeEvents=${includeEvents}`,
       HttpMethod.GET,
     )
-
-    return response
   }
 
   /**
@@ -109,17 +104,8 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param paymentRequest The Payment Request to create
    * @returns The newly created PaymentRequest if successful. An ApiError if not successful.
    */
-  async create(paymentRequest: PaymentRequestCreate): Promise<{
-    data?: PaymentRequest
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<PaymentRequest>(
-      this.apiUrl,
-      HttpMethod.POST,
-      paymentRequest,
-    )
-
-    return response
+  async create(paymentRequest: PaymentRequestCreate): Promise<ApiResponse<PaymentRequest>> {
+    return await this.httpRequest<PaymentRequest>(this.apiUrl, HttpMethod.POST, paymentRequest)
   }
 
   /**
@@ -131,17 +117,12 @@ export class PaymentRequestClient extends BaseApiClient {
   async update(
     paymentRequestId: string,
     paymentRequestUpdate: PaymentRequestUpdate,
-  ): Promise<{
-    data?: PaymentRequest
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<PaymentRequest>(
+  ): Promise<ApiResponse<PaymentRequest>> {
+    return await this.httpRequest<PaymentRequest>(
       `${this.apiUrl}/${paymentRequestId}`,
       HttpMethod.PUT,
       paymentRequestUpdate,
     )
-
-    return response
   }
 
   /**
@@ -149,16 +130,11 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param paymentRequestId The Payment Request Id
    * @returns A PaymentRequestMinimal if successful. An ApiError if not successful.
    */
-  async minimal(paymentRequestId: string): Promise<{
-    data?: PaymentRequestMinimal
-    error?: ApiError
-  }> {
-    const response = await this.httpRequest<PaymentRequestMinimal>(
+  async minimal(paymentRequestId: string): Promise<ApiResponse<PaymentRequestMinimal>> {
+    return await this.httpRequest<PaymentRequestMinimal>(
       `${this.apiUrl}/${paymentRequestId}/minimal`,
       HttpMethod.GET,
     )
-
-    return response
   }
 
   /**
@@ -172,7 +148,9 @@ export class PaymentRequestClient extends BaseApiClient {
   }> {
     const response = await this.httpRequest(`${this.apiUrl}/${paymentRequestId}`, HttpMethod.DELETE)
 
-    return !response.error ? { success: true } : { success: false, error: response.error }
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
   }
 
   /**
@@ -189,7 +167,9 @@ export class PaymentRequestClient extends BaseApiClient {
       HttpMethod.POST,
     )
 
-    return !response.error ? { success: true } : { success: false, error: response.error }
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
   }
 
   /**
@@ -203,23 +183,23 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param tags Optional. The tags filter to apply to retrieve payment request metrics with these tags.
    * @returns A PaymentRequestMetrics response if successful. An ApiError if not successful.
    */
-  async metrics(
-    fromDate?: Date,
-    toDate?: Date,
-    search?: string,
-    currency?: string,
-    minAmount?: number,
-    maxAmount?: number,
-    tags?: string[],
-  ): Promise<{
-    data?: PaymentRequestMetrics
-    error?: ApiError
-  }> {
+  async metrics({
+    fromDate,
+    toDate,
+    search,
+    currency,
+    minAmount,
+    maxAmount,
+    tags,
+    merchantId,
+  }: MetricsProps): Promise<ApiResponse<PaymentRequestMetrics>> {
     let url = `${this.apiUrl}/metrics`
 
     const filterParams = new URLSearchParams()
 
-    filterParams.append('merchantID', this.merchantId)
+    if (merchantId) {
+      filterParams.append('merchantID', merchantId)
+    }
 
     if (fromDate) {
       filterParams.append('fromDate', fromDate.toUTCString())
@@ -251,8 +231,6 @@ export class PaymentRequestClient extends BaseApiClient {
 
     url = `${url}?${filterParams.toString()}`
 
-    const response = await this.httpRequest<PaymentRequestMetrics>(url, HttpMethod.GET)
-
-    return response
+    return await this.httpRequest<PaymentRequestMetrics>(url, HttpMethod.GET)
   }
 }

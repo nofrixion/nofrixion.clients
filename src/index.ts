@@ -1,21 +1,11 @@
-export {
-  useBanks,
-  useMerchantTags,
-  usePaymentRequest,
-  usePaymentRequestMetrics,
-  usePaymentRequests,
-  useUserPaymentDefaults,
-} from './hooks'
+export * from './hooks'
 
-export {
-  ClientSettingsClient,
-  MerchantClient,
-  MoneyMoovApiClient,
-  PaymentRequestClient,
-} from './clients'
+export * from './clients'
 
-export * from './responseTypes/ApiResponses'
+export * from './types/ApiResponses'
 
-export * from './responseTypes/ApiRequests'
+export * from './types/ApiRequests'
 
-export * from './responseTypes/Enums'
+export * from './types/Enums'
+
+export * from './types/props'

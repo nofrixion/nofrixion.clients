@@ -1,29 +1,28 @@
 import { useEffect, useState } from 'react'
-import { SortDirection } from '../responseTypes/Enums'
-import { formatPaymentRequestSortExpression } from '../responseTypes/formatters'
-import { ApiError, PaymentRequest } from '../responseTypes/ApiResponses'
-import { PaymentRequestStatus } from '../responseTypes/Enums'
+import { formatPaymentRequestSortExpression } from '../types/formatters'
+import { ApiError, PaymentRequest } from '../types/ApiResponses'
 import { PaymentRequestClient } from '../clients'
+import { ApiProps, usePaymentRequestsProps } from '../types/props'
 
 export const usePaymentRequests = (
-  apiUrl: string,
-  authToken: string,
-  merchantId: string,
-  statusSortDirection: SortDirection,
-  createdSortDirection: SortDirection,
-  contactSortDirection: SortDirection,
-  amountSortDirection: SortDirection,
-  onUnauthorized: () => void,
-  page: number,
-  pageSize?: number,
-  fromDateMs?: number,
-  toDateMs?: number,
-  status?: PaymentRequestStatus,
-  searchFilter?: string,
-  currency?: string,
-  minAmount?: number,
-  maxAmount?: number,
-  tags?: string[],
+  {
+    merchantId,
+    statusSortDirection,
+    createdSortDirection,
+    contactSortDirection,
+    amountSortDirection,
+    pageNumber: initialPageNumber,
+    pageSize,
+    fromDateMS,
+    toDateMS,
+    status,
+    search,
+    currency,
+    minAmount,
+    maxAmount,
+    tags,
+  }: usePaymentRequestsProps,
+  { apiUrl, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [paymentRequests, setPaymentRequests] = useState<PaymentRequest[] | undefined>(undefined)
   const [pageNumber, setPageNumber] = useState(1)
@@ -33,29 +32,34 @@ export const usePaymentRequests = (
 
   useEffect(() => {
     const fetchPaymentRequests = async () => {
+      if (!authToken || !merchantId) {
+        return
+      }
+
       setIsLoading(true)
 
-      const client = new PaymentRequestClient(apiUrl, authToken, merchantId, onUnauthorized)
+      const client = new PaymentRequestClient({ apiUrl, authToken, onUnauthorized })
 
-      const response = await client.getAll(
-        page,
-        pageSize,
-        sortExpression,
-        new Date(fromDateMs ?? 0),
-        new Date(toDateMs ?? 0),
-        status,
-        searchFilter,
-        currency,
-        minAmount,
-        maxAmount,
-        tags,
-      )
+      const response = await client.getAll({
+        pageNumber: initialPageNumber,
+        pageSize: pageSize,
+        sort: sortExpression,
+        fromDate: fromDateMS ? new Date(fromDateMS) : undefined,
+        toDate: toDateMS ? new Date(toDateMS) : undefined,
+        status: status,
+        search: search,
+        currency: currency,
+        minAmount: minAmount,
+        maxAmount: maxAmount,
+        tags: tags,
+        merchantId: merchantId,
+      })
 
-      if (response.data) {
+      if (response.status === 'success') {
         setPaymentRequests(response.data.content)
         setPageNumber(response.data.pageNumber)
         setTotalRecords(response.data.totalSize)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
 
@@ -72,8 +76,6 @@ export const usePaymentRequests = (
 
     fetchPaymentRequests()
   }, [
-    page,
-    apiUrl,
     merchantId,
     authToken,
     pageSize,
@@ -81,15 +83,18 @@ export const usePaymentRequests = (
     createdSortDirection,
     contactSortDirection,
     amountSortDirection,
-    fromDateMs,
-    toDateMs,
     status,
-    searchFilter,
     currency,
     minAmount,
     maxAmount,
     tags,
     onUnauthorized,
+    pageNumber,
+    fromDateMS,
+    search,
+    apiUrl,
+    initialPageNumber,
+    toDateMS,
   ])
 
   return {

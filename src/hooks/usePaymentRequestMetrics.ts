@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react'
 import { PaymentRequestClient } from '../clients/PaymentRequestClient'
-import { ApiError, PaymentRequestMetrics } from '../responseTypes/ApiResponses'
+import { ApiError, PaymentRequestMetrics } from '../types/ApiResponses'
+import { ApiProps, usePaymentRequestMetricsProps } from '../types/props'
 
 export const usePaymentRequestMetrics = (
-  apiUrl: string,
-  authToken: string,
-  merchantId: string,
-  onUnauthorized: () => void,
-  fromDateMs?: number,
-  toDateMs?: number,
-  searchFilter?: string,
-  currency?: string,
-  minAmount?: number,
-  maxAmount?: number,
-  tags?: string[],
+  {
+    currency,
+    fromDateMS,
+    toDateMS,
+    maxAmount,
+    merchantId,
+    minAmount,
+    search,
+    tags,
+  }: usePaymentRequestMetricsProps,
+  { apiUrl, authToken, onUnauthorized }: ApiProps,
 ) => {
   const [metrics, setMetrics] = useState<PaymentRequestMetrics>()
   const [apiError, setApiError] = useState<ApiError>()
@@ -21,21 +22,28 @@ export const usePaymentRequestMetrics = (
 
   useEffect(() => {
     const fetchPaymentRequestMetrics = async () => {
-      setIsLoading(true)
-      const client = new PaymentRequestClient(apiUrl, authToken, merchantId, onUnauthorized)
-      const response = await client.metrics(
-        new Date(fromDateMs ?? 0),
-        new Date(toDateMs ?? 0),
-        searchFilter,
-        currency,
-        minAmount,
-        maxAmount,
-        tags,
-      )
+      if (!authToken || !merchantId) {
+        return
+      }
 
-      if (response.data) {
+      setIsLoading(true)
+
+      const client = new PaymentRequestClient({ apiUrl, authToken, onUnauthorized })
+
+      const response = await client.metrics({
+        fromDate: fromDateMS ? new Date(fromDateMS) : undefined,
+        toDate: toDateMS ? new Date(toDateMS) : undefined,
+        search: search,
+        currency: currency,
+        minAmount: minAmount,
+        maxAmount: maxAmount,
+        tags: tags,
+        merchantId: merchantId,
+      })
+
+      if (response.status === 'success') {
         setMetrics(response.data)
-      } else if (response.error) {
+      } else {
         setApiError(response.error)
       }
       setIsLoading(false)
@@ -43,17 +51,17 @@ export const usePaymentRequestMetrics = (
 
     fetchPaymentRequestMetrics()
   }, [
-    apiUrl,
     authToken,
     merchantId,
-    fromDateMs,
-    toDateMs,
-    searchFilter,
     currency,
     minAmount,
     maxAmount,
     tags,
     onUnauthorized,
+    apiUrl,
+    search,
+    fromDateMS,
+    toDateMS,
   ])
 
   return {
