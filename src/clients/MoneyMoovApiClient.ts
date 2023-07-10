@@ -10,8 +10,7 @@ import { UsersClient } from './UsersClient'
  * The MoneyMoov Api Client provides access to the api endpoints in the MoneyMoov api.
  */
 export class MoneyMoovApiClient {
-  apiUrl: string
-  authToken: string | undefined
+  props: ApiProps
 
   /**
    * Provides access to the MoneyMoov PaymentRequests api.
@@ -51,39 +50,14 @@ export class MoneyMoovApiClient {
    * @param authToken The OAUTH token used to authenticate with the api.
    * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
-  constructor({ apiUrl, authToken, onUnauthorized }: ApiProps) {
-    this.apiUrl = apiUrl
-    this.authToken = authToken
+  constructor({ ...props }: ApiProps) {
+    this.props = props
 
-    this.PaymentRequests = new PaymentRequestClient({
-      apiUrl,
-      authToken: authToken,
-      onUnauthorized: onUnauthorized,
-    })
-    this.ClientSettings = new ClientSettingsClient({
-      apiUrl,
-      authToken: authToken,
-      onUnauthorized: onUnauthorized,
-    })
-    this.Merchants = new MerchantClient({
-      apiUrl,
-      authToken: authToken,
-      onUnauthorized: onUnauthorized,
-    })
-    this.Accounts = new AccountsClient({
-      apiUrl,
-      authToken: authToken,
-      onUnauthorized: onUnauthorized,
-    })
-    this.Transactions = new TransactionsClient({
-      apiUrl,
-      authToken: authToken,
-      onUnauthorized: onUnauthorized,
-    })
-    this.Users = new UsersClient({
-      apiUrl,
-      authToken: authToken,
-      onUnauthorized: onUnauthorized,
-    })
+    this.PaymentRequests = new PaymentRequestClient(props)
+    this.ClientSettings = new ClientSettingsClient(props)
+    this.Merchants = new MerchantClient(props)
+    this.Accounts = new AccountsClient(props)
+    this.Transactions = new TransactionsClient(props)
+    this.Users = new UsersClient(props)
   }
 }

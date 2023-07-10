@@ -1,5 +1,5 @@
 import { ApiProps, MerchantProps } from '../types/props'
-import { Account, ApiError, ApiResponse, HttpMethod } from '../types'
+import { Account, ApiResponse, HttpMethod } from '../types'
 import { BaseApiClient } from './BaseApiClient'
 
 /**
@@ -16,9 +16,9 @@ export class AccountsClient extends BaseApiClient {
    * @param authToken The OAUTH token used to authenticate with the api.
    * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
-  constructor({ apiUrl, authToken, onUnauthorized }: ApiProps) {
-    super(authToken, onUnauthorized)
-    this.url = `${apiUrl}/accounts`
+  constructor({ ...props }: ApiProps) {
+    super(props.authToken, props.onUnauthorized)
+    this.url = `${props.apiUrl}/accounts`
   }
 
   /**

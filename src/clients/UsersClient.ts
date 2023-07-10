@@ -16,9 +16,9 @@ export class UsersClient extends BaseApiClient {
    * @param authToken The OAUTH token used to authenticate with the api.
    * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
-  constructor({ apiUrl, authToken, onUnauthorized }: ApiProps) {
-    super(authToken, onUnauthorized)
-    this.url = `${apiUrl}/user`
+  constructor({ ...props }: ApiProps) {
+    super(props.authToken, props.onUnauthorized)
+    this.url = `${props.apiUrl}/user`
   }
 
   /**

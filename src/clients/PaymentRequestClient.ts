@@ -30,9 +30,9 @@ export class PaymentRequestClient extends BaseApiClient {
    * @param authToken The OAUTH token used to authenticate with the api.
    * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
-  constructor({ apiUrl, authToken, onUnauthorized }: ApiProps) {
-    super(authToken, onUnauthorized)
-    this.apiUrl = `${apiUrl}/paymentrequests`
+  constructor({ ...props }: ApiProps) {
+    super(props.authToken, props.onUnauthorized)
+    this.apiUrl = `${props.apiUrl}/paymentrequests`
   }
 
   /**
