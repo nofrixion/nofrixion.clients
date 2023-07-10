@@ -258,6 +258,8 @@ export class PaymentRequestClient extends BaseApiClient {
       },
     )
 
-    return !response.error ? { success: true } : { success: false, error: response.error }
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
   }
 }
