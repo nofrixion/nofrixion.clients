@@ -46,6 +46,7 @@ export type PaymentRequest = {
   cardStripePaymentIntentID?: string
   cardStripePaymentIntentSecret?: string
   addresses: PaymentRequestAddress[]
+  events: PaymentRequestEvent[]
   jwk?: string
   tags: Tag[]
   priorityBankID?: string
@@ -113,6 +114,7 @@ export type PaymentRequestAddress = {
 export type PaymentRequestEvent = {
   id: string
   paymentRequestID: string
+  inserted: Date
   eventType: PaymentRequestEventType
   amount: number
   currency: Currency
