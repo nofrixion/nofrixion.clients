@@ -7,7 +7,6 @@ import {
   PaymentMethodTypes,
   PaymentProcessor,
   PaymentRequestEventType,
-  PaymentRequestStatus,
   PaymentResult,
   Wallets,
 } from './Enums'
@@ -174,6 +173,10 @@ export type PaymentRequestMetrics = {
   paid: number
   unpaid: number
   partiallyPaid: number
+  totalAmountsByCurrency: Record<
+    'all' | 'paid' | 'partiallyPaid' | 'unpaid',
+    Record<'eur' | 'gbp', number | undefined>
+  >
 }
 
 export type UserPaymentDefaults = {
