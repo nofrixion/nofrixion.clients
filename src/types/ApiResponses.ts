@@ -7,7 +7,6 @@ import {
   PaymentMethodTypes,
   PaymentProcessor,
   PaymentRequestEventType,
-  PaymentRequestStatus,
   PaymentResult,
   Wallets,
 } from './Enums'
@@ -47,6 +46,7 @@ export type PaymentRequest = {
   cardStripePaymentIntentID?: string
   cardStripePaymentIntentSecret?: string
   addresses: PaymentRequestAddress[]
+  events: PaymentRequestEvent[]
   jwk?: string
   tags: Tag[]
   priorityBankID?: string
@@ -70,7 +70,7 @@ export type PaymentRequestPaymentAttempt = {
   refundedAmount: number
   currency: Currency.EUR | Currency.GBP
   paymentProcessor: PaymentProcessor
-  status: PaymentRequestStatus
+  status: PaymentResult
   walletName?: Wallets
 }
 
@@ -114,6 +114,7 @@ export type PaymentRequestAddress = {
 export type PaymentRequestEvent = {
   id: string
   paymentRequestID: string
+  inserted: Date
   eventType: PaymentRequestEventType
   amount: number
   currency: Currency
@@ -174,6 +175,10 @@ export type PaymentRequestMetrics = {
   paid: number
   unpaid: number
   partiallyPaid: number
+  totalAmountsByCurrency: Record<
+    'all' | 'paid' | 'partiallyPaid' | 'unpaid',
+    Record<'eur' | 'gbp', number | undefined>
+  >
 }
 
 export type UserPaymentDefaults = {
