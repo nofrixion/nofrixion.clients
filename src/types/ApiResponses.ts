@@ -175,8 +175,9 @@ export type PaymentRequestMetrics = {
   paid: number
   unpaid: number
   partiallyPaid: number
+  authorized: number
   totalAmountsByCurrency: Record<
-    'all' | 'paid' | 'partiallyPaid' | 'unpaid',
+    'all' | 'paid' | 'partiallyPaid' | 'unpaid' | 'authorized',
     Record<'eur' | 'gbp', number | undefined>
   >
 }
