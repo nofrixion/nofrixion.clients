@@ -37,15 +37,16 @@ export class TransactionsClient extends BaseApiClient {
     fromDate,
     toDate,
   }: TransactionsProps): Promise<ApiResponse<TransactionPageResponse>> {
+    const url = `${this.apiUrl}/${accountId}`
+
     return await this.getPagedResponse<TransactionPageResponse>(
       {
-        accountId: accountId,
         pageNumber: pageNumber,
         pageSize: pageSize,
         fromDate: fromDate,
         toDate: toDate,
       },
-      this.apiUrl,
+      url,
     )
   }
 }
