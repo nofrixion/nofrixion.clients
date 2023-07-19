@@ -46,7 +46,6 @@ export type PaymentRequest = {
   cardStripePaymentIntentID?: string
   cardStripePaymentIntentSecret?: string
   addresses: PaymentRequestAddress[]
-  events: PaymentRequestEvent[]
   jwk?: string
   tags: Tag[]
   priorityBankID?: string
@@ -68,6 +67,7 @@ export type PaymentRequestPaymentAttempt = {
   authorisedAmount: number
   settledAmount: number
   refundedAmount: number
+  captureAttempts: PaymentRequestCaptureAttempt[]
   currency: Currency.EUR | Currency.GBP
   paymentProcessor: PaymentProcessor
   status: PaymentResult
@@ -111,28 +111,9 @@ export type PaymentRequestAddress = {
   email?: string
 }
 
-export type PaymentRequestEvent = {
-  id: string
-  paymentRequestID: string
-  inserted: Date
-  eventType: PaymentRequestEventType
-  amount: number
-  currency: Currency
-  status?: string
-  errorReason?: string
-  errorMessage?: string
-  rawResponse: string
-  rawResponseHash: string
-  cardRequestID?: string
-  cardTransactionID?: string
-  cardTokenCustomerID?: string
-  cardAuthorizationResponseID?: string
-  lightningInvoice?: string
-  pispPaymentServiceProviderID?: string
-  pispPaymentInitiationID?: string
-  pispRedirectUrl?: string
-  pispToken?: string
-  paymentProcessorName: PaymentProcessor
+export type PaymentRequestCaptureAttempt = {
+  capturedAt?: Date
+  capturedAmount: number
 }
 
 export interface PageResponse<T> {
