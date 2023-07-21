@@ -145,6 +145,7 @@ export abstract class BaseApiClient {
         headers: {
           Authorization: `Bearer ${this.authToken}`,
           'content-type': contentType,
+          'X-CSRF': '1',
         },
       })
 
