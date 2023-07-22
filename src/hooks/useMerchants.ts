@@ -3,7 +3,7 @@ import { ApiProps } from '../types/props'
 import { ApiError, Merchant } from '../types/ApiResponses'
 import { useEffect, useState } from 'react'
 
-export const useMerchants = ({ apiUrl, authToken, onUnauthorized }: ApiProps) => {
+export const useMerchants = ({ apiUrl, authToken }: ApiProps) => {
   const [merchants, setMerchants] = useState<Merchant[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [apiError, setApiError] = useState<ApiError>()
@@ -11,13 +11,9 @@ export const useMerchants = ({ apiUrl, authToken, onUnauthorized }: ApiProps) =>
   useEffect(() => {
     const fetchMerchants = async () => {
       try {
-        if (!authToken) {
-          return
-        }
-
         setIsLoading(true)
 
-        const client = new MerchantClient({ apiUrl, authToken, onUnauthorized })
+        const client = new MerchantClient({ apiUrl, authToken })
 
         const response = await client.get()
 
@@ -35,7 +31,7 @@ export const useMerchants = ({ apiUrl, authToken, onUnauthorized }: ApiProps) =>
     }
 
     fetchMerchants()
-  }, [apiUrl, authToken, onUnauthorized])
+  }, [apiUrl, authToken])
 
   return { merchants, isLoading, apiError }
 }

@@ -3,23 +3,20 @@ import { MerchantClient } from '../clients/MerchantClient'
 import { ApiError, BankSettings } from '../types/ApiResponses'
 import { ApiProps, MerchantProps } from '../types/props'
 
-export const useBanks = (
-  { merchantId }: MerchantProps,
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
-) => {
+export const useBanks = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
   const [banks, setBanks] = useState<BankSettings[]>()
   const [apiError, setApiError] = useState<ApiError>()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchBanks = async () => {
-      if (!authToken || !merchantId) {
+      if (!merchantId) {
         return
       }
 
       setIsLoading(true)
 
-      const client = new MerchantClient({ apiUrl, authToken, onUnauthorized })
+      const client = new MerchantClient({ apiUrl, authToken })
       const response = await client.getBankSettings({ merchantId })
 
       if (response.status === 'success') {
@@ -32,7 +29,7 @@ export const useBanks = (
     }
 
     fetchBanks()
-  }, [authToken, merchantId, onUnauthorized, apiUrl])
+  }, [authToken, merchantId, apiUrl])
 
   return {
     banks,

@@ -3,7 +3,7 @@ import { ApiError, User } from '../types'
 import { UsersClient } from '../clients'
 import { ApiProps } from '../types/props'
 
-export const useUser = ({ apiUrl, authToken, onUnauthorized }: ApiProps) => {
+export const useUser = ({ apiUrl, authToken }: ApiProps) => {
   const [user, setUser] = useState<User>()
   const [apiError, setApiError] = useState<ApiError>()
   const [isLoading, setIsLoading] = useState(true)
@@ -17,7 +17,7 @@ export const useUser = ({ apiUrl, authToken, onUnauthorized }: ApiProps) => {
 
         setIsLoading(true)
 
-        const client = new UsersClient({ apiUrl, authToken, onUnauthorized })
+        const client = new UsersClient({ apiUrl, authToken })
         const response = await client.getUser()
 
         if (response.status === 'success') {
@@ -34,7 +34,7 @@ export const useUser = ({ apiUrl, authToken, onUnauthorized }: ApiProps) => {
     }
 
     fetchUser()
-  }, [authToken, onUnauthorized, apiUrl])
+  }, [authToken, apiUrl])
 
   return { user, isLoading, apiError }
 }

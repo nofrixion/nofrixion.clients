@@ -28,10 +28,9 @@ export class PaymentRequestClient extends BaseApiClient {
    * Sandbox: https://api-sandbox.nofrixion.com/api/v1
    * @param apiUrl The base api url.
    * @param authToken The OAUTH token used to authenticate with the api.
-   * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
   constructor({ ...props }: ApiProps) {
-    super(props.authToken, props.onUnauthorized)
+    super(props.authToken)
     this.apiUrl = `${props.apiUrl}/paymentrequests`
   }
 

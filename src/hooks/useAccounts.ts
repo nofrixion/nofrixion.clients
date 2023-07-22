@@ -3,10 +3,7 @@ import { Account, ApiError } from '../types/ApiResponses'
 import { AccountsClient } from '../clients/AccountsClient'
 import { ApiProps, MerchantProps } from '../types/props'
 
-export const useAccounts = (
-  { merchantId }: MerchantProps,
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
-) => {
+export const useAccounts = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [apiError, setApiError] = useState<ApiError>()
   const [isLoading, setIsLoading] = useState(true)
@@ -14,13 +11,13 @@ export const useAccounts = (
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        if (!authToken || !merchantId) {
+        if (!merchantId) {
           return
         }
 
         setIsLoading(true)
 
-        const client = new AccountsClient({ apiUrl, authToken, onUnauthorized })
+        const client = new AccountsClient({ apiUrl, authToken })
         const response = await client.getAccounts({ merchantId: merchantId })
 
         if (response.status === 'success') {
@@ -37,7 +34,7 @@ export const useAccounts = (
     }
 
     fetchAccounts()
-  }, [authToken, merchantId, onUnauthorized, apiUrl])
+  }, [authToken, merchantId, apiUrl])
 
   return { accounts, isLoading, apiError }
 }

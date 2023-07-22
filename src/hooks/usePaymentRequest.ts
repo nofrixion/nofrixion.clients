@@ -5,14 +5,14 @@ import { ApiProps, usePaymentRequestProps } from '../types/props'
 
 export const usePaymentRequest = (
   { paymentRequestId, merchantId }: usePaymentRequestProps,
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
+  { apiUrl, authToken }: ApiProps,
 ) => {
   const [paymentRequest, setPaymentRequest] = useState<PaymentRequest>()
   const [apiError, setApiError] = useState<ApiError>()
 
   useEffect(() => {
     const fetchPaymentRequest = async () => {
-      const client = new PaymentRequestClient({ apiUrl, authToken, onUnauthorized })
+      const client = new PaymentRequestClient({ apiUrl, authToken })
       const response = await client.get({ paymentRequestId, merchantId })
 
       if (response.status === 'success') {
@@ -23,7 +23,7 @@ export const usePaymentRequest = (
     }
 
     fetchPaymentRequest()
-  }, [paymentRequestId, authToken, merchantId, onUnauthorized, apiUrl])
+  }, [paymentRequestId, authToken, merchantId, apiUrl])
 
   return {
     paymentRequest,

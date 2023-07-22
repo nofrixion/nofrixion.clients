@@ -14,7 +14,7 @@ export const usePaymentRequestMetrics = (
     search,
     tags,
   }: usePaymentRequestMetricsProps,
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
+  { apiUrl, authToken }: ApiProps,
 ) => {
   const [metrics, setMetrics] = useState<PaymentRequestMetrics>()
   const [apiError, setApiError] = useState<ApiError>()
@@ -22,13 +22,13 @@ export const usePaymentRequestMetrics = (
 
   useEffect(() => {
     const fetchPaymentRequestMetrics = async () => {
-      if (!authToken || !merchantId) {
+      if (!merchantId) {
         return
       }
 
       setIsLoading(true)
 
-      const client = new PaymentRequestClient({ apiUrl, authToken, onUnauthorized })
+      const client = new PaymentRequestClient({ apiUrl, authToken })
 
       const response = await client.metrics({
         fromDate: fromDateMS ? new Date(fromDateMS) : undefined,
@@ -57,7 +57,6 @@ export const usePaymentRequestMetrics = (
     minAmount,
     maxAmount,
     tags,
-    onUnauthorized,
     apiUrl,
     search,
     fromDateMS,

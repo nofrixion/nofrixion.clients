@@ -4,7 +4,7 @@ import { TransactionsClient } from '../clients/TransactionsClient'
 import { ApiProps, TransactionsProps } from '../types/props'
 
 export const useTransactions = (
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
+  { apiUrl, authToken }: ApiProps,
   { accountId, pageNumber, pageSize }: TransactionsProps,
 ) => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -14,13 +14,13 @@ export const useTransactions = (
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        if (!authToken || !accountId) {
+        if (!accountId) {
           return
         }
 
         setIsLoading(true)
 
-        const client = new TransactionsClient({ apiUrl, authToken, onUnauthorized })
+        const client = new TransactionsClient({ apiUrl, authToken })
 
         const response = await client.get({ accountId, pageNumber, pageSize })
 
@@ -38,7 +38,7 @@ export const useTransactions = (
     }
 
     fetchTransactions()
-  }, [accountId, authToken, onUnauthorized, pageNumber, pageSize, apiUrl])
+  }, [accountId, authToken, pageNumber, pageSize, apiUrl])
 
   return { transactions, isLoading, apiError }
 }
