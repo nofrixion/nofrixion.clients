@@ -20,7 +20,7 @@ export default defineConfig({
       fileName: (format) => `nofrixion-clients.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'axios'],
+      external: ['react', 'react-dom', 'axios', '@tanstack/react-query'],
       output: {
         globals: {
           react: 'React',

@@ -1,39 +1,34 @@
-import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
-import { ApiError, BankSettings } from '../types/ApiResponses'
+import { ApiResponse, MerchantBankSettings } from '../types/ApiResponses'
 import { ApiProps, MerchantProps } from '../types/props'
+import { useQuery } from '@tanstack/react-query'
+
+const fetchBanks = async (
+  apiUrl: string,
+  merchantId?: string,
+  authToken?: string,
+): Promise<ApiResponse<MerchantBankSettings>> => {
+  if (!merchantId) {
+    return {
+      status: 'error',
+      error: {
+        title: 'No merchantId provided',
+        detail: 'No merchantId provided',
+      },
+      timestamp: new Date(),
+    }
+  }
+  const client = new MerchantClient({ apiUrl, authToken })
+
+  const response = await client.getBankSettings({ merchantId })
+
+  return response
+}
 
 export const useBanks = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
-  const [banks, setBanks] = useState<BankSettings[]>()
-  const [apiError, setApiError] = useState<ApiError>()
-  const [isLoading, setIsLoading] = useState(true)
+  const QUERY_KEY = ['Banks', merchantId]
 
-  useEffect(() => {
-    const fetchBanks = async () => {
-      if (!merchantId) {
-        return
-      }
-
-      setIsLoading(true)
-
-      const client = new MerchantClient({ apiUrl, authToken })
-      const response = await client.getBankSettings({ merchantId })
-
-      if (response.status === 'success') {
-        setBanks(response.data.payByBankSettings)
-      } else {
-        setApiError(response.error)
-      }
-
-      setIsLoading(false)
-    }
-
-    fetchBanks()
-  }, [authToken, merchantId, apiUrl])
-
-  return {
-    banks,
-    apiError,
-    isLoading,
-  }
+  return useQuery<ApiResponse<MerchantBankSettings>, Error>(QUERY_KEY, () =>
+    fetchBanks(apiUrl, merchantId, authToken),
+  )
 }
