@@ -1,4 +1,5 @@
 import { MerchantClient } from '../clients/MerchantClient'
+import { formatApiResponse } from '../types'
 import { ApiResponse, MerchantBankSettings } from '../types/ApiResponses'
 import { ApiProps, MerchantProps } from '../types/props'
 import { useQuery } from '@tanstack/react-query'
@@ -9,14 +10,7 @@ const fetchBanks = async (
   authToken?: string,
 ): Promise<ApiResponse<MerchantBankSettings>> => {
   if (!merchantId) {
-    return {
-      status: 'error',
-      error: {
-        title: 'No merchantId provided',
-        detail: 'No merchantId provided',
-      },
-      timestamp: new Date(),
-    }
+    return formatApiResponse<MerchantBankSettings>('No merchantId provided')
   }
   const client = new MerchantClient({ apiUrl, authToken })
 
