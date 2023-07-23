@@ -1,32 +1,32 @@
-import { useEffect, useState } from 'react'
-import { PaymentRequestClient } from '../clients/PaymentRequestClient'
-import { ApiError, PaymentRequest } from '../types/ApiResponses'
+import { PaymentRequestClient } from '../clients'
+import { formatApiResponse } from '../types'
+import { ApiResponse, PaymentRequest } from '../types/ApiResponses'
 import { ApiProps, usePaymentRequestProps } from '../types/props'
+import { useQuery } from '@tanstack/react-query'
+
+const fetchPaymentRequest = async (
+  apiUrl: string,
+  paymentRequestId?: string,
+  merchantId?: string,
+  authToken?: string,
+): Promise<ApiResponse<PaymentRequest>> => {
+  if (!merchantId) {
+    return formatApiResponse<PaymentRequest>('No merchantId provided')
+  }
+
+  const client = new PaymentRequestClient({ apiUrl, authToken })
+  const response = await client.get({ paymentRequestId, merchantId })
+
+  return response
+}
 
 export const usePaymentRequest = (
   { paymentRequestId, merchantId }: usePaymentRequestProps,
   { apiUrl, authToken }: ApiProps,
 ) => {
-  const [paymentRequest, setPaymentRequest] = useState<PaymentRequest>()
-  const [apiError, setApiError] = useState<ApiError>()
+  const QUERY_KEY = ['PaymentRequest', paymentRequestId]
 
-  useEffect(() => {
-    const fetchPaymentRequest = async () => {
-      const client = new PaymentRequestClient({ apiUrl, authToken })
-      const response = await client.get({ paymentRequestId, merchantId })
-
-      if (response.status === 'success') {
-        setPaymentRequest(response.data)
-      } else {
-        setApiError(response.error)
-      }
-    }
-
-    fetchPaymentRequest()
-  }, [paymentRequestId, authToken, merchantId, apiUrl])
-
-  return {
-    paymentRequest,
-    apiError,
-  }
+  return useQuery<ApiResponse<PaymentRequest>, Error>(QUERY_KEY, () =>
+    fetchPaymentRequest(apiUrl, paymentRequestId, merchantId, authToken),
+  )
 }

@@ -20,13 +20,9 @@ const fetchMerchantTags = async (
 }
 
 export const useMerchantTags = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
-  const QUERY_KEY = ['Banks', merchantId]
+  const QUERY_KEY = ['MerchantTags', merchantId]
 
-  return useQuery<ApiResponse<Tag[]>, Error>(
-    QUERY_KEY,
-    () => fetchMerchantTags(apiUrl, merchantId, authToken),
-    {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
+  return useQuery<ApiResponse<Tag[]>, Error>(QUERY_KEY, () =>
+    fetchMerchantTags(apiUrl, merchantId, authToken),
   )
 }
