@@ -10,7 +10,7 @@ const fetchBanks = async (
   authToken?: string,
 ): Promise<ApiResponse<MerchantBankSettings>> => {
   if (!merchantId) {
-    return formatApiResponse<MerchantBankSettings>('No merchantId provided')
+    return formatApiResponse<MerchantBankSettings>('No merchantId provided. Cannot fetch banks.')
   }
 
   const client = new MerchantClient({ apiUrl, authToken })

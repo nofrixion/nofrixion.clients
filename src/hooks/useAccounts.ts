@@ -9,7 +9,7 @@ const fetchAccounts = async (
   authToken?: string,
 ): Promise<ApiResponse<Account[]>> => {
   if (!merchantId) {
-    return formatApiResponse<Account[]>('No merchantId provided')
+    return formatApiResponse<Account[]>('No merchantId provided. Cannot fetch accounts.')
   }
   const client = new AccountsClient({ apiUrl, authToken })
   const response = await client.getAccounts({ merchantId: merchantId })

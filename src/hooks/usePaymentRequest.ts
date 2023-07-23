@@ -11,7 +11,14 @@ const fetchPaymentRequest = async (
   authToken?: string,
 ): Promise<ApiResponse<PaymentRequest>> => {
   if (!merchantId) {
-    return formatApiResponse<PaymentRequest>('No merchantId provided')
+    return formatApiResponse<PaymentRequest>(
+      'No merchantId provided. Cannot fetch payment request.',
+    )
+  }
+  if (!paymentRequestId) {
+    return formatApiResponse<PaymentRequest>(
+      'No paymentRequestId provided. Cannot fetch payment request.',
+    )
   }
 
   const client = new PaymentRequestClient({ apiUrl, authToken })

@@ -10,7 +10,7 @@ const fetchMerchantTags = async (
   authToken?: string,
 ): Promise<ApiResponse<Tag[]>> => {
   if (!merchantId) {
-    return formatApiResponse<Tag[]>('No merchantId provided')
+    return formatApiResponse<Tag[]>('No merchantId provided. Cannot fetch tags.')
   }
 
   const client = new MerchantClient({ apiUrl, authToken })
