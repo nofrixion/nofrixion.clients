@@ -12,6 +12,7 @@ const fetchBanks = async (
   if (!merchantId) {
     return formatApiResponse<MerchantBankSettings>('No merchantId provided')
   }
+
   const client = new MerchantClient({ apiUrl, authToken })
 
   const response = await client.getBankSettings({ merchantId })

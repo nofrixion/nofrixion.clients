@@ -1,4 +1,4 @@
-import { ApiError, ApiResponse } from './ApiResponses'
+import { ApiResponse } from './ApiResponses'
 import { SortDirection } from './Enums'
 
 /**
