@@ -17,11 +17,7 @@ const fetchMerchants = async (
 export const useMerchants = ({ apiUrl, authToken }: ApiProps) => {
   const QUERY_KEY = ['Merchants']
 
-  return useQuery<ApiResponse<Merchant[]>, Error>(
-    QUERY_KEY,
-    () => fetchMerchants(apiUrl, authToken),
-    {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
+  return useQuery<ApiResponse<Merchant[]>, Error>(QUERY_KEY, () =>
+    fetchMerchants(apiUrl, authToken),
   )
 }

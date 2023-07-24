@@ -23,11 +23,7 @@ const fetchBanks = async (
 export const useBanks = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
   const QUERY_KEY = ['Banks', merchantId]
 
-  return useQuery<ApiResponse<MerchantBankSettings>, Error>(
-    QUERY_KEY,
-    () => fetchBanks(apiUrl, merchantId, authToken),
-    {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
+  return useQuery<ApiResponse<MerchantBankSettings>, Error>(QUERY_KEY, () =>
+    fetchBanks(apiUrl, merchantId, authToken),
   )
 }
