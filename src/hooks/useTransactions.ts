@@ -1,44 +1,34 @@
-import { useEffect, useState } from 'react'
-import { ApiError, Transaction } from '../types/ApiResponses'
-import { TransactionsClient } from '../clients/TransactionsClient'
+import { TransactionsClient } from '../clients'
+import { formatApiResponse } from '../types'
+import { ApiResponse, TransactionPageResponse } from '../types/ApiResponses'
 import { ApiProps, TransactionsProps } from '../types/props'
+import { useQuery } from '@tanstack/react-query'
+
+const fetchTransactions = async (
+  apiUrl: string,
+  accountId?: string,
+  authToken?: string,
+  pageNumber?: number,
+  pageSize?: number,
+): Promise<ApiResponse<TransactionPageResponse>> => {
+  if (!accountId) {
+    return formatApiResponse<TransactionPageResponse>('No merchantId provided. Cannot fetch tags.')
+  }
+
+  const client = new TransactionsClient({ apiUrl, authToken })
+
+  const response = await client.get({ accountId, pageNumber, pageSize })
+
+  return response
+}
 
 export const useTransactions = (
-  { apiUrl, authToken }: ApiProps,
   { accountId, pageNumber, pageSize }: TransactionsProps,
+  { apiUrl, authToken }: ApiProps,
 ) => {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [apiError, setApiError] = useState<ApiError>()
+  const QUERY_KEY = ['Transactions', accountId, pageNumber, pageSize, apiUrl, authToken]
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        if (!accountId) {
-          return
-        }
-
-        setIsLoading(true)
-
-        const client = new TransactionsClient({ apiUrl, authToken })
-
-        const response = await client.get({ accountId, pageNumber, pageSize })
-
-        if (response.status === 'success') {
-          setTransactions(response.data.content)
-        } else {
-          setApiError(response.error)
-        }
-
-        setIsLoading(false)
-      } catch (error) {
-        setIsLoading(false)
-        return []
-      }
-    }
-
-    fetchTransactions()
-  }, [accountId, authToken, pageNumber, pageSize, apiUrl])
-
-  return { transactions, isLoading, apiError }
+  return useQuery<ApiResponse<TransactionPageResponse>, Error>(QUERY_KEY, () =>
+    fetchTransactions(apiUrl, accountId, authToken, pageNumber, pageSize),
+  )
 }

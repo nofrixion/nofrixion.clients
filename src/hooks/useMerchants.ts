@@ -15,7 +15,7 @@ const fetchMerchants = async (
 }
 
 export const useMerchants = ({ apiUrl, authToken }: ApiProps) => {
-  const QUERY_KEY = ['Merchants']
+  const QUERY_KEY = ['Merchants', apiUrl, authToken]
 
   return useQuery<ApiResponse<Merchant[]>, Error>(QUERY_KEY, () =>
     fetchMerchants(apiUrl, authToken),

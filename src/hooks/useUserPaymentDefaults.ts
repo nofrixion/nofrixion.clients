@@ -14,7 +14,7 @@ const fetchUserPaymentDefaults = async (
 }
 
 export const useUserPaymentDefaults = ({ apiUrl, authToken }: ApiProps) => {
-  const QUERY_KEY = ['UserPaymentDefaults']
+  const QUERY_KEY = ['UserPaymentDefaults', apiUrl, authToken]
 
   return useQuery<ApiResponse<UserPaymentDefaults>, Error>(QUERY_KEY, () =>
     fetchUserPaymentDefaults(apiUrl, authToken),

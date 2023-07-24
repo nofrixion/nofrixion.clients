@@ -18,7 +18,7 @@ const fetchAccounts = async (
 }
 
 export const useAccounts = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
-  const QUERY_KEY = ['Accounts', merchantId]
+  const QUERY_KEY = ['Accounts', merchantId, apiUrl, authToken]
 
   return useQuery<ApiResponse<Account[]>, Error>(QUERY_KEY, () =>
     fetchAccounts(apiUrl, merchantId, authToken),

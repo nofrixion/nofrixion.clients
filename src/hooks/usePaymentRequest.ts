@@ -31,7 +31,7 @@ export const usePaymentRequest = (
   { paymentRequestId, merchantId }: usePaymentRequestProps,
   { apiUrl, authToken }: ApiProps,
 ) => {
-  const QUERY_KEY = ['PaymentRequest', paymentRequestId]
+  const QUERY_KEY = ['PaymentRequest', merchantId, paymentRequestId, apiUrl, authToken]
 
   return useQuery<ApiResponse<PaymentRequest>, Error>(QUERY_KEY, () =>
     fetchPaymentRequest(apiUrl, paymentRequestId, merchantId, authToken),

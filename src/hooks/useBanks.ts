@@ -21,7 +21,7 @@ const fetchBanks = async (
 }
 
 export const useBanks = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
-  const QUERY_KEY = ['Banks', merchantId]
+  const QUERY_KEY = ['Banks', merchantId, apiUrl, authToken]
 
   return useQuery<ApiResponse<MerchantBankSettings>, Error>(QUERY_KEY, () =>
     fetchBanks(apiUrl, merchantId, authToken),
