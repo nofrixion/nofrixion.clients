@@ -1,42 +1,29 @@
-import { useEffect, useState } from 'react'
 import { MerchantClient } from '../clients/MerchantClient'
-import { ApiError, BankSettings } from '../types/ApiResponses'
+import { formatApiResponse } from '../types'
+import { ApiResponse, MerchantBankSettings } from '../types/ApiResponses'
 import { ApiProps, MerchantProps } from '../types/props'
+import { useQuery } from '@tanstack/react-query'
 
-export const useBanks = (
-  { merchantId }: MerchantProps,
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
-) => {
-  const [banks, setBanks] = useState<BankSettings[]>()
-  const [apiError, setApiError] = useState<ApiError>()
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchBanks = async () => {
-      if (!authToken || !merchantId) {
-        return
-      }
-
-      setIsLoading(true)
-
-      const client = new MerchantClient({ apiUrl, authToken, onUnauthorized })
-      const response = await client.getBankSettings({ merchantId })
-
-      if (response.status === 'success') {
-        setBanks(response.data.payByBankSettings)
-      } else {
-        setApiError(response.error)
-      }
-
-      setIsLoading(false)
-    }
-
-    fetchBanks()
-  }, [authToken, merchantId, onUnauthorized, apiUrl])
-
-  return {
-    banks,
-    apiError,
-    isLoading,
+const fetchBanks = async (
+  apiUrl: string,
+  merchantId?: string,
+  authToken?: string,
+): Promise<ApiResponse<MerchantBankSettings>> => {
+  if (!merchantId) {
+    return formatApiResponse<MerchantBankSettings>('No merchantId provided. Cannot fetch banks.')
   }
+
+  const client = new MerchantClient({ apiUrl, authToken })
+
+  const response = await client.getBankSettings({ merchantId })
+
+  return response
+}
+
+export const useBanks = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
+  const QUERY_KEY = ['Banks', merchantId, apiUrl, authToken]
+
+  return useQuery<ApiResponse<MerchantBankSettings>, Error>(QUERY_KEY, () =>
+    fetchBanks(apiUrl, merchantId, authToken),
+  )
 }

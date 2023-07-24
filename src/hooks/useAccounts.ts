@@ -1,43 +1,26 @@
-import { useEffect, useState } from 'react'
-import { Account, ApiError } from '../types/ApiResponses'
-import { AccountsClient } from '../clients/AccountsClient'
+import { AccountsClient } from '../clients'
+import { Account, ApiResponse, formatApiResponse } from '../types'
 import { ApiProps, MerchantProps } from '../types/props'
+import { useQuery } from '@tanstack/react-query'
 
-export const useAccounts = (
-  { merchantId }: MerchantProps,
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
-) => {
-  const [accounts, setAccounts] = useState<Account[]>([])
-  const [apiError, setApiError] = useState<ApiError>()
-  const [isLoading, setIsLoading] = useState(true)
+const fetchAccounts = async (
+  apiUrl: string,
+  merchantId?: string,
+  authToken?: string,
+): Promise<ApiResponse<Account[]>> => {
+  if (!merchantId) {
+    return formatApiResponse<Account[]>('No merchantId provided. Cannot fetch accounts.')
+  }
+  const client = new AccountsClient({ apiUrl, authToken })
+  const response = await client.getAccounts({ merchantId: merchantId })
 
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      try {
-        if (!authToken || !merchantId) {
-          return
-        }
+  return response
+}
 
-        setIsLoading(true)
+export const useAccounts = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
+  const QUERY_KEY = ['Accounts', merchantId, apiUrl, authToken]
 
-        const client = new AccountsClient({ apiUrl, authToken, onUnauthorized })
-        const response = await client.getAccounts({ merchantId: merchantId })
-
-        if (response.status === 'success') {
-          setAccounts(response.data)
-        } else {
-          setApiError(response.error)
-        }
-
-        setIsLoading(false)
-      } catch (error) {
-        setIsLoading(false)
-        return []
-      }
-    }
-
-    fetchAccounts()
-  }, [authToken, merchantId, onUnauthorized, apiUrl])
-
-  return { accounts, isLoading, apiError }
+  return useQuery<ApiResponse<Account[]>, Error>(QUERY_KEY, () =>
+    fetchAccounts(apiUrl, merchantId, authToken),
+  )
 }

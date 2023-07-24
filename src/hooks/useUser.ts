@@ -1,40 +1,17 @@
-import { useEffect, useState } from 'react'
-import { ApiError, User } from '../types'
 import { UsersClient } from '../clients'
+import { ApiResponse, User } from '../types/ApiResponses'
 import { ApiProps } from '../types/props'
+import { useQuery } from '@tanstack/react-query'
 
-export const useUser = ({ apiUrl, authToken, onUnauthorized }: ApiProps) => {
-  const [user, setUser] = useState<User>()
-  const [apiError, setApiError] = useState<ApiError>()
-  const [isLoading, setIsLoading] = useState(true)
+const fetchUser = async (apiUrl: string, authToken?: string): Promise<ApiResponse<User>> => {
+  const client = new UsersClient({ apiUrl, authToken })
+  const response = await client.getUser()
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (!authToken) {
-          return
-        }
+  return response
+}
 
-        setIsLoading(true)
+export const useUser = ({ apiUrl, authToken }: ApiProps) => {
+  const QUERY_KEY = ['User', apiUrl, authToken]
 
-        const client = new UsersClient({ apiUrl, authToken, onUnauthorized })
-        const response = await client.getUser()
-
-        if (response.status === 'success') {
-          setUser(response.data)
-        } else {
-          setApiError(response.error)
-        }
-
-        setIsLoading(false)
-      } catch (error) {
-        setIsLoading(false)
-        return []
-      }
-    }
-
-    fetchUser()
-  }, [authToken, onUnauthorized, apiUrl])
-
-  return { user, isLoading, apiError }
+  return useQuery<ApiResponse<User>, Error>(QUERY_KEY, () => fetchUser(apiUrl, authToken))
 }
