@@ -32,7 +32,7 @@ export interface MetricsProps extends FilterResponseProps, MerchantProps {}
 
 export interface ApiProps {
   apiUrl: string
-  authToken: string | undefined
+  authToken?: string
 }
 
 export interface MerchantProps {

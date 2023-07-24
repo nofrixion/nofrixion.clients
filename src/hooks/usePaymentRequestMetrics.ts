@@ -51,6 +51,8 @@ export const usePaymentRequestMetrics = (
 ) => {
   const QUERY_KEY = [
     'PaymentRequestMetrics',
+    apiUrl,
+    authToken,
     currency,
     fromDateMS,
     toDateMS,

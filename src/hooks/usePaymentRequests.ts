@@ -78,6 +78,8 @@ export const usePaymentRequests = (
 ) => {
   const QUERY_KEY = [
     'PaymentRequests',
+    apiUrl,
+    authToken,
     merchantId,
     statusSortDirection,
     createdSortDirection,
