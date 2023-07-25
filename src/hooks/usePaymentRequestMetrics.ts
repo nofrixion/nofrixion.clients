@@ -1,7 +1,40 @@
-import { useEffect, useState } from 'react'
-import { PaymentRequestClient } from '../clients/PaymentRequestClient'
-import { ApiError, PaymentRequestMetrics } from '../types/ApiResponses'
+import { PaymentRequestClient } from '../clients'
+import { formatApiResponse } from '../types'
+import { ApiResponse, PaymentRequestMetrics } from '../types/ApiResponses'
 import { ApiProps, usePaymentRequestMetricsProps } from '../types/props'
+import { useQuery } from '@tanstack/react-query'
+
+const fetchPaymentRequestMetrics = async (
+  apiUrl: string,
+  currency?: string,
+  merchantId?: string,
+  authToken?: string,
+  fromDateMS?: number,
+  toDateMS?: number,
+  minAmount?: number,
+  maxAmount?: number,
+  tags?: string[],
+  search?: string,
+): Promise<ApiResponse<PaymentRequestMetrics>> => {
+  if (!merchantId) {
+    return formatApiResponse<PaymentRequestMetrics>('No merchantId provided. Cannot fetch metrics.')
+  }
+
+  const client = new PaymentRequestClient({ apiUrl, authToken })
+
+  const response = await client.metrics({
+    fromDate: fromDateMS ? new Date(fromDateMS) : undefined,
+    toDate: toDateMS ? new Date(toDateMS) : undefined,
+    search: search,
+    currency: currency,
+    minAmount: minAmount,
+    maxAmount: maxAmount,
+    tags: tags,
+    merchantId: merchantId,
+  })
+
+  return response
+}
 
 export const usePaymentRequestMetrics = (
   {
@@ -14,59 +47,34 @@ export const usePaymentRequestMetrics = (
     search,
     tags,
   }: usePaymentRequestMetricsProps,
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
+  { apiUrl, authToken }: ApiProps,
 ) => {
-  const [metrics, setMetrics] = useState<PaymentRequestMetrics>()
-  const [apiError, setApiError] = useState<ApiError>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-
-  useEffect(() => {
-    const fetchPaymentRequestMetrics = async () => {
-      if (!authToken || !merchantId) {
-        return
-      }
-
-      setIsLoading(true)
-
-      const client = new PaymentRequestClient({ apiUrl, authToken, onUnauthorized })
-
-      const response = await client.metrics({
-        fromDate: fromDateMS ? new Date(fromDateMS) : undefined,
-        toDate: toDateMS ? new Date(toDateMS) : undefined,
-        search: search,
-        currency: currency,
-        minAmount: minAmount,
-        maxAmount: maxAmount,
-        tags: tags,
-        merchantId: merchantId,
-      })
-
-      if (response.status === 'success') {
-        setMetrics(response.data)
-      } else {
-        setApiError(response.error)
-      }
-      setIsLoading(false)
-    }
-
-    fetchPaymentRequestMetrics()
-  }, [
-    authToken,
-    merchantId,
-    currency,
-    minAmount,
-    maxAmount,
-    tags,
-    onUnauthorized,
+  const QUERY_KEY = [
+    'PaymentRequestMetrics',
     apiUrl,
-    search,
+    authToken,
+    currency,
     fromDateMS,
     toDateMS,
-  ])
+    maxAmount,
+    merchantId,
+    minAmount,
+    search,
+    tags,
+  ]
 
-  return {
-    metrics,
-    apiError,
-    isLoading,
-  }
+  return useQuery<ApiResponse<PaymentRequestMetrics>, Error>(QUERY_KEY, () =>
+    fetchPaymentRequestMetrics(
+      apiUrl,
+      currency,
+      merchantId,
+      authToken,
+      fromDateMS,
+      toDateMS,
+      minAmount,
+      maxAmount,
+      tags,
+      search,
+    ),
+  )
 }
