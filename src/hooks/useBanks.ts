@@ -9,10 +9,6 @@ const fetchBanks = async (
   merchantId?: string,
   authToken?: string,
 ): Promise<ApiResponse<MerchantBankSettings>> => {
-  if (!merchantId) {
-    return formatApiResponse<MerchantBankSettings>('No merchantId provided. Cannot fetch banks.')
-  }
-
   const client = new MerchantClient({ apiUrl, authToken })
 
   const response = await client.getBankSettings({ merchantId })
@@ -23,7 +19,11 @@ const fetchBanks = async (
 export const useBanks = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
   const QUERY_KEY = ['Banks', merchantId, apiUrl, authToken]
 
-  return useQuery<ApiResponse<MerchantBankSettings>, Error>(QUERY_KEY, () =>
-    fetchBanks(apiUrl, merchantId, authToken),
+  return useQuery<ApiResponse<MerchantBankSettings>, Error>(
+    QUERY_KEY,
+    () => fetchBanks(apiUrl, merchantId, authToken),
+    {
+      enabled: !!merchantId,
+    },
   )
 }

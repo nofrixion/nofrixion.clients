@@ -16,10 +16,6 @@ const fetchPaymentRequestMetrics = async (
   tags?: string[],
   search?: string,
 ): Promise<ApiResponse<PaymentRequestMetrics>> => {
-  if (!merchantId) {
-    return formatApiResponse<PaymentRequestMetrics>('No merchantId provided. Cannot fetch metrics.')
-  }
-
   const client = new PaymentRequestClient({ apiUrl, authToken })
 
   const response = await client.metrics({
@@ -63,18 +59,23 @@ export const usePaymentRequestMetrics = (
     tags,
   ]
 
-  return useQuery<ApiResponse<PaymentRequestMetrics>, Error>(QUERY_KEY, () =>
-    fetchPaymentRequestMetrics(
-      apiUrl,
-      currency,
-      merchantId,
-      authToken,
-      fromDateMS,
-      toDateMS,
-      minAmount,
-      maxAmount,
-      tags,
-      search,
-    ),
+  return useQuery<ApiResponse<PaymentRequestMetrics>, Error>(
+    QUERY_KEY,
+    () =>
+      fetchPaymentRequestMetrics(
+        apiUrl,
+        currency,
+        merchantId,
+        authToken,
+        fromDateMS,
+        toDateMS,
+        minAmount,
+        maxAmount,
+        tags,
+        search,
+      ),
+    {
+      enabled: !!merchantId,
+    },
   )
 }

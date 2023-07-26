@@ -11,10 +11,6 @@ const fetchTransactions = async (
   pageNumber?: number,
   pageSize?: number,
 ): Promise<ApiResponse<TransactionPageResponse>> => {
-  if (!accountId) {
-    return formatApiResponse<TransactionPageResponse>('No merchantId provided. Cannot fetch tags.')
-  }
-
   const client = new TransactionsClient({ apiUrl, authToken })
 
   const response = await client.get({ accountId, pageNumber, pageSize })
@@ -28,7 +24,11 @@ export const useTransactions = (
 ) => {
   const QUERY_KEY = ['Transactions', accountId, pageNumber, pageSize, apiUrl, authToken]
 
-  return useQuery<ApiResponse<TransactionPageResponse>, Error>(QUERY_KEY, () =>
-    fetchTransactions(apiUrl, accountId, authToken, pageNumber, pageSize),
+  return useQuery<ApiResponse<TransactionPageResponse>, Error>(
+    QUERY_KEY,
+    () => fetchTransactions(apiUrl, accountId, authToken, pageNumber, pageSize),
+    {
+      enabled: !!accountId,
+    },
   )
 }
