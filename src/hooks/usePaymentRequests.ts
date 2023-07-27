@@ -23,12 +23,6 @@ const fetchPaymentRequests = async (
   maxAmount?: number,
   tags?: string[],
 ): Promise<ApiResponse<PaymentRequestPageResponse>> => {
-  if (!merchantId) {
-    return formatApiResponse<PaymentRequestPageResponse>(
-      'No merchantId provided. Cannot fetch metrics.',
-    )
-  }
-
   const sortExpression = formatPaymentRequestSortExpression(
     statusSortDirection,
     createdSortDirection,
@@ -97,25 +91,30 @@ export const usePaymentRequests = (
     tags,
   ]
 
-  return useQuery<ApiResponse<PaymentRequestPageResponse>, Error>(QUERY_KEY, () =>
-    fetchPaymentRequests(
-      apiUrl,
-      statusSortDirection,
-      createdSortDirection,
-      contactSortDirection,
-      amountSortDirection,
-      authToken,
-      merchantId,
-      pageNumber,
-      pageSize,
-      fromDateMS,
-      toDateMS,
-      status,
-      search,
-      currency,
-      minAmount,
-      maxAmount,
-      tags,
-    ),
+  return useQuery<ApiResponse<PaymentRequestPageResponse>, Error>(
+    QUERY_KEY,
+    () =>
+      fetchPaymentRequests(
+        apiUrl,
+        statusSortDirection,
+        createdSortDirection,
+        contactSortDirection,
+        amountSortDirection,
+        authToken,
+        merchantId,
+        pageNumber,
+        pageSize,
+        fromDateMS,
+        toDateMS,
+        status,
+        search,
+        currency,
+        minAmount,
+        maxAmount,
+        tags,
+      ),
+    {
+      enabled: !!merchantId,
+    },
   )
 }
