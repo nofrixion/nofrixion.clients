@@ -9,10 +9,6 @@ const fetchMerchantTags = async (
   merchantId?: string,
   authToken?: string,
 ): Promise<ApiResponse<Tag[]>> => {
-  if (!merchantId) {
-    return formatApiResponse<Tag[]>('No merchantId provided. Cannot fetch tags.')
-  }
-
   const client = new MerchantClient({ apiUrl, authToken })
   const response = await client.getTags({ merchantId })
 
@@ -22,7 +18,11 @@ const fetchMerchantTags = async (
 export const useMerchantTags = ({ merchantId }: MerchantProps, { apiUrl, authToken }: ApiProps) => {
   const QUERY_KEY = ['MerchantTags', merchantId, apiUrl, authToken]
 
-  return useQuery<ApiResponse<Tag[]>, Error>(QUERY_KEY, () =>
-    fetchMerchantTags(apiUrl, merchantId, authToken),
+  return useQuery<ApiResponse<Tag[]>, Error>(
+    QUERY_KEY,
+    () => fetchMerchantTags(apiUrl, merchantId, authToken),
+    {
+      enabled: !!merchantId,
+    },
   )
 }
