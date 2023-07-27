@@ -10,17 +10,6 @@ const fetchPaymentRequest = async (
   merchantId?: string,
   authToken?: string,
 ): Promise<ApiResponse<PaymentRequest>> => {
-  if (!merchantId) {
-    return formatApiResponse<PaymentRequest>(
-      'No merchantId provided. Cannot fetch payment request.',
-    )
-  }
-  if (!paymentRequestId) {
-    return formatApiResponse<PaymentRequest>(
-      'No paymentRequestId provided. Cannot fetch payment request.',
-    )
-  }
-
   const client = new PaymentRequestClient({ apiUrl, authToken })
   const response = await client.get({ paymentRequestId, merchantId })
 
@@ -33,7 +22,11 @@ export const usePaymentRequest = (
 ) => {
   const QUERY_KEY = ['PaymentRequest', merchantId, paymentRequestId, apiUrl, authToken]
 
-  return useQuery<ApiResponse<PaymentRequest>, Error>(QUERY_KEY, () =>
-    fetchPaymentRequest(apiUrl, paymentRequestId, merchantId, authToken),
+  return useQuery<ApiResponse<PaymentRequest>, Error>(
+    QUERY_KEY,
+    () => fetchPaymentRequest(apiUrl, paymentRequestId, merchantId, authToken),
+    {
+      enabled: !!paymentRequestId && !!merchantId,
+    },
   )
 }
