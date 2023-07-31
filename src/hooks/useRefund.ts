@@ -93,9 +93,7 @@ export const useRefund = (
         })
       }
 
-      if (mutation.error) {
-        return { error: mutation.error.message }
-      } else if (mutation.data?.error) {
+      if (mutation.data?.error) {
         return { error: mutation.data?.error.detail }
       } else {
         return { error: undefined }
