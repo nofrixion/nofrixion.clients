@@ -59,14 +59,16 @@ export type PaymentRequestPaymentAttempt = {
   paymentRequestID: string
   initiatedAt: Date
   authorisedAt?: Date
+  cardAuthorisedAt?: Date
   settledAt?: Date
   refundedAt?: Date
   settleFailedAt?: Date
   paymentMethod: PaymentMethodTypes
   attemptedAmount: number
   authorisedAmount: number
+  cardAuthorisedAmount: number
   settledAmount: number
-  refundedAmount: number
+  refundAttempts: PaymentRequestRefundAttempt[]
   captureAttempts: PaymentRequestCaptureAttempt[]
   currency: Currency.EUR | Currency.GBP
   paymentProcessor: PaymentProcessor
@@ -109,6 +111,16 @@ export type PaymentRequestAddress = {
   addressCountryCode?: string
   phone?: string
   email?: string
+}
+
+export type PaymentRequestRefundAttempt = {
+  refundPayoutID?: string
+  refundInitiatedAt?: Date
+  refundSettledAt?: Date
+  refundCancelledAt?: Date
+  refundInitiatedAmount: number
+  refundSettledAmount: number
+  refundCancelledAmount: number
 }
 
 export type PaymentRequestCaptureAttempt = {
