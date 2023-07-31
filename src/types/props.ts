@@ -77,3 +77,9 @@ export interface usePaymentRequestMetricsProps extends MetricsProps {
   fromDateMS?: number
   toDateMS?: number
 }
+
+export interface RefundProps {
+  authorizationId: string
+  paymentRequestId: string
+  amount?: number
+}
