@@ -261,4 +261,32 @@ export class PaymentRequestClient extends BaseApiClient {
       ? { success: true }
       : { success: false, error: response.error }
   }
+
+  /**
+   * Refunds a Payment Request attempt.
+   * @param paymentRequestId The Payment Request Id
+   * @param authorizationId card payment authorization Id
+   * @param amount Amount to refund. If set to 0, the remaining amount will be refunded.
+   * @returns True if successfull. An ApiError if not successful.
+   */
+  async refundCardPayment(
+    paymentRequestId: string,
+    authorizationId: string,
+    amount?: number,
+  ): Promise<{
+    success?: boolean
+    error?: ApiError
+  }> {
+    const response = await this.httpRequest(
+      `${this.apiUrl}/${paymentRequestId}/card/void/${amount}`,
+      HttpMethod.POST,
+      {
+        authorizationID: authorizationId,
+      },
+    )
+
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
+  }
 }
