@@ -277,7 +277,6 @@ export class PaymentRequestClient extends BaseApiClient {
     success?: boolean
     error?: ApiError
   }> {
-    console.log('refundCardPayment', paymentRequestId, authorizationId, amount)
     const response = await this.httpRequest(
       `${this.apiUrl}/${paymentRequestId}/card/void/${amount}`,
       HttpMethod.POST,

@@ -40,7 +40,7 @@ export const useRefund = (
   }: usePaymentRequestsProps,
   { apiUrl, authToken }: ApiProps,
 ): {
-  processRefund: (refundProps: RefundProps) => Promise<{ error: string | undefined }>
+  processRefund: (refundProps: RefundProps) => Promise<{ error: ApiError | undefined }>
 } => {
   const queryClient = useQueryClient()
 
@@ -64,6 +64,7 @@ export const useRefund = (
     maxAmount,
     tags,
   ]
+
   // When this mutation succeeds, invalidate any queries with the payment requests query key
   const mutation: UseMutationResult<
     { success?: boolean | undefined; error?: ApiError | undefined },
@@ -78,26 +79,29 @@ export const useRefund = (
         authToken,
         variables.amount,
       ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+    onSuccess: (data: { success?: boolean | undefined; error?: ApiError | undefined }) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+      }
     },
   })
 
   const processRefund = useCallback(
     async ({ authorizationId, paymentRequestId, amount }: RefundProps) => {
       if (paymentRequestId) {
-        mutation.mutate({
+        const result = await mutation.mutateAsync({
           authorizationId,
           paymentRequestId,
           amount,
         })
-      }
 
-      if (mutation.data?.error) {
-        return { error: mutation.data?.error.detail }
-      } else {
-        return { error: undefined }
+        if (result.success) {
+          return { error: undefined }
+        } else {
+          return { error: result.error }
+        }
       }
+      return { error: undefined }
     },
     [mutation],
   )
