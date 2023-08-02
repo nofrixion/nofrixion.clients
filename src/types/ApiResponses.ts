@@ -66,7 +66,7 @@ export type PaymentRequestPaymentAttempt = {
   paymentMethod: PaymentMethodTypes
   attemptedAmount: number
   authorisedAmount: number
-  cardAuthorisedAmount: number
+  cardAuthorisedAmount?: number
   settledAmount: number
   refundAttempts: PaymentRequestRefundAttempt[]
   captureAttempts: PaymentRequestCaptureAttempt[]
