@@ -83,3 +83,9 @@ export interface RefundProps {
   paymentRequestId: string
   amount?: number
 }
+
+export interface CaptureProps {
+  authorizationId: string
+  paymentRequestId: string
+  amount?: number
+}
