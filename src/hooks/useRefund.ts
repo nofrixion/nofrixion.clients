@@ -1,8 +1,8 @@
-import { useCallback } from 'react'
-import { PaymentRequestClient } from '../clients'
-import { ApiError } from '../types/ApiResponses'
-import { ApiProps, RefundProps, usePaymentRequestsProps } from '../types/props'
+import { useCallback, useState } from 'react'
 import { UseMutationResult, useMutation, useQueryClient } from '@tanstack/react-query'
+import { ApiError } from '../types'
+import { PaymentRequestClient } from '../clients'
+import { ApiProps, RefundProps, usePaymentRequestsProps } from '../types/props'
 
 const refund = async (
   apiUrl: string,
@@ -44,7 +44,31 @@ export const useRefund = (
 } => {
   const queryClient = useQueryClient()
 
-  const QUERY_KEY = [
+  const [paymentRequestID, setPaymentRequestID] = useState<string>()
+
+  const SINGLE_PAYMENT_REQUEST_QUERY_KEY = [
+    'PaymentRequest',
+    merchantId,
+    paymentRequestID,
+    apiUrl,
+    authToken,
+  ]
+
+  const METRICS_QUERY_KEY = [
+    'PaymentRequestMetrics',
+    apiUrl,
+    authToken,
+    currency,
+    fromDateMS,
+    toDateMS,
+    maxAmount,
+    merchantId,
+    minAmount,
+    search,
+    tags,
+  ]
+
+  const PAYMENT_REQUESTS_QUERY_KEY = [
     'PaymentRequests',
     apiUrl,
     authToken,
@@ -81,7 +105,11 @@ export const useRefund = (
       ),
     onSuccess: (data: { success?: boolean | undefined; error?: ApiError | undefined }) => {
       if (data.success) {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+        // After refund is successful, invalidate the payment requests cache, the single payment request cache,
+        // and the metrics cache because the status of the payment request has changed
+        queryClient.invalidateQueries({ queryKey: PAYMENT_REQUESTS_QUERY_KEY })
+        queryClient.invalidateQueries({ queryKey: SINGLE_PAYMENT_REQUEST_QUERY_KEY })
+        queryClient.invalidateQueries({ queryKey: METRICS_QUERY_KEY })
       }
     },
   })
@@ -89,6 +117,7 @@ export const useRefund = (
   const processRefund = useCallback(
     async ({ authorizationId, paymentRequestId, amount }: RefundProps) => {
       if (paymentRequestId) {
+        setPaymentRequestID(paymentRequestId)
         const result = await mutation.mutateAsync({
           authorizationId,
           paymentRequestId,
