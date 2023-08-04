@@ -47,6 +47,8 @@ const fetchPaymentRequests = async (
     merchantId: merchantId,
   })
 
+  console.log("Hey there! I'm the best ever", response)
+
   return response
 }
 
