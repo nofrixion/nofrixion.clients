@@ -4,13 +4,11 @@ import { HttpMethod } from '../types/Enums'
 import { PagedResponseProps } from '../types/props'
 
 export abstract class BaseApiClient {
-  authToken: string | undefined
-  onUnauthorized: () => void
+  authToken?: string
   debug: boolean
 
-  constructor(authToken: string | undefined, onUnauthorized: () => void, debug?: boolean) {
+  constructor(authToken?: string, debug?: boolean) {
     this.authToken = authToken
-    this.onUnauthorized = onUnauthorized
     this.debug = debug ?? false
   }
 
@@ -145,6 +143,7 @@ export abstract class BaseApiClient {
         headers: {
           Authorization: `Bearer ${this.authToken}`,
           'content-type': contentType,
+          'X-CSRF': '1',
         },
       })
 
@@ -157,11 +156,6 @@ export abstract class BaseApiClient {
       // Axios will throw an exception for all errors
 
       const error = ex as AxiosError
-
-      if (error.response?.status === 401) {
-        // Unauthorized
-        this.onUnauthorized()
-      }
 
       if (error.response?.data) {
         // This contains the problem details

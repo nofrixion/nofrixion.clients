@@ -32,8 +32,7 @@ export interface MetricsProps extends FilterResponseProps, MerchantProps {}
 
 export interface ApiProps {
   apiUrl: string
-  authToken: string | undefined
-  onUnauthorized: () => void
+  authToken?: string
 }
 
 export interface MerchantProps {
@@ -77,4 +76,10 @@ export interface usePaymentRequestsProps
 export interface usePaymentRequestMetricsProps extends MetricsProps {
   fromDateMS?: number
   toDateMS?: number
+}
+
+export interface RefundProps {
+  authorizationId: string
+  paymentRequestId: string
+  amount?: number
 }

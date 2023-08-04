@@ -1,8 +1,54 @@
-import { useEffect, useState } from 'react'
-import { formatPaymentRequestSortExpression } from '../types/formatters'
-import { ApiError, PaymentRequest } from '../types/ApiResponses'
 import { PaymentRequestClient } from '../clients'
+import { SortDirection, formatApiResponse, formatPaymentRequestSortExpression } from '../types'
+import { ApiResponse, PaymentRequestPageResponse } from '../types/ApiResponses'
 import { ApiProps, usePaymentRequestsProps } from '../types/props'
+import { useQuery } from '@tanstack/react-query'
+
+const fetchPaymentRequests = async (
+  apiUrl: string,
+  statusSortDirection: SortDirection,
+  createdSortDirection: SortDirection,
+  contactSortDirection: SortDirection,
+  amountSortDirection: SortDirection,
+  authToken?: string,
+  merchantId?: string,
+  pageNumber?: number,
+  pageSize?: number,
+  fromDateMS?: number,
+  toDateMS?: number,
+  status?: string,
+  search?: string,
+  currency?: string,
+  minAmount?: number,
+  maxAmount?: number,
+  tags?: string[],
+): Promise<ApiResponse<PaymentRequestPageResponse>> => {
+  const sortExpression = formatPaymentRequestSortExpression(
+    statusSortDirection,
+    createdSortDirection,
+    contactSortDirection,
+    amountSortDirection,
+  )
+
+  const client = new PaymentRequestClient({ apiUrl, authToken })
+
+  const response = await client.getAll({
+    pageNumber: pageNumber,
+    pageSize: pageSize,
+    sort: sortExpression,
+    fromDate: fromDateMS ? new Date(fromDateMS) : undefined,
+    toDate: toDateMS ? new Date(toDateMS) : undefined,
+    status: status,
+    search: search,
+    currency: currency,
+    minAmount: minAmount,
+    maxAmount: maxAmount,
+    tags: tags,
+    merchantId: merchantId,
+  })
+
+  return response
+}
 
 export const usePaymentRequests = (
   {
@@ -11,7 +57,7 @@ export const usePaymentRequests = (
     createdSortDirection,
     contactSortDirection,
     amountSortDirection,
-    pageNumber: initialPageNumber,
+    pageNumber,
     pageSize,
     fromDateMS,
     toDateMS,
@@ -22,86 +68,53 @@ export const usePaymentRequests = (
     maxAmount,
     tags,
   }: usePaymentRequestsProps,
-  { apiUrl, authToken, onUnauthorized }: ApiProps,
+  { apiUrl, authToken }: ApiProps,
 ) => {
-  const [paymentRequests, setPaymentRequests] = useState<PaymentRequest[] | undefined>(undefined)
-  const [pageNumber, setPageNumber] = useState(1)
-  const [totalRecords, setTotalRecords] = useState(1)
-  const [apiError, setApiError] = useState<ApiError>()
-  const [isLoading, setIsLoading] = useState(false)
-
-  useEffect(() => {
-    const fetchPaymentRequests = async () => {
-      if (!authToken || !merchantId) {
-        return
-      }
-
-      setIsLoading(true)
-
-      const client = new PaymentRequestClient({ apiUrl, authToken, onUnauthorized })
-
-      const response = await client.getAll({
-        pageNumber: initialPageNumber,
-        pageSize: pageSize,
-        sort: sortExpression,
-        fromDate: fromDateMS ? new Date(fromDateMS) : undefined,
-        toDate: toDateMS ? new Date(toDateMS) : undefined,
-        status: status,
-        search: search,
-        currency: currency,
-        minAmount: minAmount,
-        maxAmount: maxAmount,
-        tags: tags,
-        merchantId: merchantId,
-      })
-
-      if (response.status === 'success') {
-        setPaymentRequests(response.data.content)
-        setPageNumber(response.data.pageNumber)
-        setTotalRecords(response.data.totalSize)
-      } else {
-        setApiError(response.error)
-      }
-
-      setIsLoading(false)
-    }
-
-    // Build the sort expression
-    const sortExpression = formatPaymentRequestSortExpression(
-      statusSortDirection,
-      createdSortDirection,
-      contactSortDirection,
-      amountSortDirection,
-    )
-
-    fetchPaymentRequests()
-  }, [
-    merchantId,
+  const QUERY_KEY = [
+    'PaymentRequests',
+    apiUrl,
     authToken,
-    pageSize,
+    merchantId,
     statusSortDirection,
     createdSortDirection,
     contactSortDirection,
     amountSortDirection,
+    pageNumber,
+    pageSize,
+    fromDateMS,
+    toDateMS,
     status,
+    search,
     currency,
     minAmount,
     maxAmount,
     tags,
-    onUnauthorized,
-    pageNumber,
-    fromDateMS,
-    search,
-    apiUrl,
-    initialPageNumber,
-    toDateMS,
-  ])
+  ]
 
-  return {
-    paymentRequests,
-    pageNumber,
-    totalRecords,
-    apiError,
-    isLoading,
-  }
+  return useQuery<ApiResponse<PaymentRequestPageResponse>, Error>(
+    QUERY_KEY,
+    () =>
+      fetchPaymentRequests(
+        apiUrl,
+        statusSortDirection,
+        createdSortDirection,
+        contactSortDirection,
+        amountSortDirection,
+        authToken,
+        merchantId,
+        pageNumber,
+        pageSize,
+        fromDateMS,
+        toDateMS,
+        status,
+        search,
+        currency,
+        minAmount,
+        maxAmount,
+        tags,
+      ),
+    {
+      enabled: !!merchantId,
+    },
+  )
 }

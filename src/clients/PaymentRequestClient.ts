@@ -28,10 +28,9 @@ export class PaymentRequestClient extends BaseApiClient {
    * Sandbox: https://api-sandbox.nofrixion.com/api/v1
    * @param apiUrl The base api url.
    * @param authToken The OAUTH token used to authenticate with the api.
-   * @param onUnauthorized A callback function to be called when a 401 response is received.
    */
   constructor({ ...props }: ApiProps) {
-    super(props.authToken, props.onUnauthorized)
+    super(props.authToken)
     this.apiUrl = `${props.apiUrl}/paymentrequests`
   }
 
@@ -255,6 +254,34 @@ export class PaymentRequestClient extends BaseApiClient {
       {
         authorizationID: authorizationId,
         amount: amount ?? 0,
+      },
+    )
+
+    return response.status === 'success'
+      ? { success: true }
+      : { success: false, error: response.error }
+  }
+
+  /**
+   * Refunds a Payment Request attempt.
+   * @param paymentRequestId The Payment Request Id
+   * @param authorizationId card payment authorization Id
+   * @param amount Amount to refund. If set to 0, the remaining amount will be refunded.
+   * @returns True if successfull. An ApiError if not successful.
+   */
+  async refundCardPayment(
+    paymentRequestId: string,
+    authorizationId: string,
+    amount?: number,
+  ): Promise<{
+    success?: boolean
+    error?: ApiError
+  }> {
+    const response = await this.httpRequest(
+      `${this.apiUrl}/${paymentRequestId}/card/void/${amount}`,
+      HttpMethod.POST,
+      {
+        authorizationID: authorizationId,
       },
     )
 

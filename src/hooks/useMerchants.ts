@@ -1,41 +1,23 @@
-import { MerchantClient } from '../clients'
+import { MerchantClient } from '../clients/MerchantClient'
+import { ApiResponse, Merchant } from '../types/ApiResponses'
 import { ApiProps } from '../types/props'
-import { ApiError, Merchant } from '../types/ApiResponses'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-export const useMerchants = ({ apiUrl, authToken, onUnauthorized }: ApiProps) => {
-  const [merchants, setMerchants] = useState<Merchant[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [apiError, setApiError] = useState<ApiError>()
+const fetchMerchants = async (
+  apiUrl: string,
+  authToken?: string,
+): Promise<ApiResponse<Merchant[]>> => {
+  const client = new MerchantClient({ apiUrl, authToken })
 
-  useEffect(() => {
-    const fetchMerchants = async () => {
-      try {
-        if (!authToken) {
-          return
-        }
+  const response = await client.get()
 
-        setIsLoading(true)
+  return response
+}
 
-        const client = new MerchantClient({ apiUrl, authToken, onUnauthorized })
+export const useMerchants = ({ apiUrl, authToken }: ApiProps) => {
+  const QUERY_KEY = ['Merchants', apiUrl, authToken]
 
-        const response = await client.get()
-
-        if (response.status === 'success') {
-          setMerchants(response.data)
-        } else {
-          setApiError(response.error)
-        }
-
-        setIsLoading(false)
-      } catch (error) {
-        setIsLoading(false)
-        return []
-      }
-    }
-
-    fetchMerchants()
-  }, [apiUrl, authToken, onUnauthorized])
-
-  return { merchants, isLoading, apiError }
+  return useQuery<ApiResponse<Merchant[]>, Error>(QUERY_KEY, () =>
+    fetchMerchants(apiUrl, authToken),
+  )
 }
