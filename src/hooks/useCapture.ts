@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { UseMutationResult, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ApiError } from '../types'
 import { PaymentRequestClient } from '../clients'
-import { ApiProps, CaptureProps } from '../types/props'
+import { ApiProps, CaptureProps, usePaymentRequestsProps } from '../types/props'
 
 const capture = async (
   apiUrl: string,
@@ -21,7 +21,23 @@ const capture = async (
 }
 
 export const useCapture = (
-  merchantId: string,
+  {
+    merchantId,
+    statusSortDirection,
+    createdSortDirection,
+    contactSortDirection,
+    amountSortDirection,
+    pageNumber,
+    pageSize,
+    fromDateMS,
+    toDateMS,
+    status,
+    search,
+    currency,
+    minAmount,
+    maxAmount,
+    tags,
+  }: usePaymentRequestsProps,
   { apiUrl, authToken }: ApiProps,
 ): {
   processCapture: (captureProps: CaptureProps) => Promise<{ error: ApiError | undefined }>
@@ -38,7 +54,28 @@ export const useCapture = (
     authToken,
   ]
 
-  // When this mutation succeeds, invalidate any queries with the single payment request query key
+  const PAYMENT_REQUESTS_QUERY_KEY = [
+    'PaymentRequests',
+    apiUrl,
+    authToken,
+    merchantId,
+    statusSortDirection,
+    createdSortDirection,
+    contactSortDirection,
+    amountSortDirection,
+    pageNumber,
+    pageSize,
+    fromDateMS,
+    toDateMS,
+    status,
+    search,
+    currency,
+    minAmount,
+    maxAmount,
+    tags,
+  ]
+
+  // When this mutation succeeds, invalidate any queries with the payment requests query key
   const mutation: UseMutationResult<
     { success?: boolean | undefined; error?: ApiError | undefined },
     Error,
@@ -55,6 +92,7 @@ export const useCapture = (
     onSuccess: (data: { success?: boolean | undefined; error?: ApiError | undefined }) => {
       if (data.success) {
         queryClient.invalidateQueries({ queryKey: SINGLE_PAYMENT_REQUEST_QUERY_KEY })
+        queryClient.invalidateQueries({ queryKey: PAYMENT_REQUESTS_QUERY_KEY })
       }
     },
   })
